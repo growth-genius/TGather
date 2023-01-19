@@ -1,14 +1,19 @@
 package com.ysdeveloper.tgather.modules.account.entity;
 
+import static jakarta.persistence.FetchType.LAZY;
+
 import com.ysdeveloper.tgather.modules.account.enums.AccountRole;
 import com.ysdeveloper.tgather.modules.account.enums.TravelTheme;
 import com.ysdeveloper.tgather.modules.common.UpdatedEntity;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import java.util.Set;
 import java.util.UUID;
 import lombok.AccessLevel;
@@ -33,12 +38,16 @@ public class Account extends UpdatedEntity {
     /* 비밀번호 */
     private String password;
     /* 권한 */
-    @Enumerated( EnumType.STRING)
+    @ElementCollection( fetch = LAZY )
+    @Enumerated( EnumType.STRING )
+    @CollectionTable( name = "account_roles", joinColumns = @JoinColumn( name = "account_id" ) )
     private Set<AccountRole> roles;
     /* 나이 */
     private int age;
     /* 여행 테마 */
-    @Enumerated( EnumType.STRING)
+    @ElementCollection( fetch = LAZY )
+    @Enumerated( EnumType.STRING )
+    @CollectionTable( name = "travel_themes", joinColumns = @JoinColumn( name = "account_id" ) )
     private Set<TravelTheme> travelThemes;
 
     public Account ( String userName, String email, String password, Set<AccountRole> roles, int age, Set<TravelTheme> travelThemes ) {
