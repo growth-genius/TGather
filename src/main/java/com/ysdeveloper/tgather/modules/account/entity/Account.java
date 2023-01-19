@@ -5,7 +5,9 @@ import static jakarta.persistence.FetchType.LAZY;
 import com.ysdeveloper.tgather.modules.account.enums.AccountRole;
 import com.ysdeveloper.tgather.modules.account.enums.TravelTheme;
 import com.ysdeveloper.tgather.modules.common.UpdatedEntity;
+import com.ysdeveloper.tgather.modules.travelgroup.entity.TravelGroupMember;
 import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -14,6 +16,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import lombok.AccessLevel;
@@ -22,12 +26,13 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor( access = AccessLevel.PROTECTED )
 public class Account extends UpdatedEntity {
 
     /* 아이디 */
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue( strategy = GenerationType.IDENTITY )
+    @Column( name = "account_id" )
     private Long id;
     /* 고유 식별자 */
     private String uuid;
@@ -50,6 +55,9 @@ public class Account extends UpdatedEntity {
     @CollectionTable( name = "travel_themes", joinColumns = @JoinColumn( name = "account_id" ) )
     private Set<TravelTheme> travelThemes;
 
+    @OneToMany( mappedBy = "account", fetch = LAZY )
+    private List<TravelGroupMember> travelGroupMemberList;
+
     public Account ( String userName, String email, String password, Set<AccountRole> roles, int age, Set<TravelTheme> travelThemes ) {
         this.userName = userName;
         this.email = email;
@@ -60,8 +68,8 @@ public class Account extends UpdatedEntity {
         this.uuid = UUID.randomUUID().toString();
     }
 
-    public static Account of(String userName, String email, String password, Set<AccountRole> roles, int age, Set<TravelTheme> travelThemes) {
-        return new Account(userName, email, password, roles, age, travelThemes);
+    public static Account of ( String userName, String email, String password, Set<AccountRole> roles, int age, Set<TravelTheme> travelThemes ) {
+        return new Account( userName, email, password, roles, age, travelThemes );
     }
 
 }
