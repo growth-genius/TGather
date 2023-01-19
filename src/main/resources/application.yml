@@ -1,0 +1,20 @@
+spring:
+  profiles:
+    active: local
+  datasource:
+    # url: jdbc:postgresql://115.143.85.142:5433/tgather
+    url: ENC(+TasJbhsafCBaBZgWLzLAfU6DiGQCh2Gr6KgzcePum2XUev7jd3IKS8CQLZtsVN2maI0pK7PmQ4=)
+    username: ENC(hqkRrgyS+c1OmS3yDd6+WkuCZpW5eztE)
+    password: ENC(888SsFi1JOb3mG4ccMfHCSsFRthz+DLmXMJQTMykjsI=)
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+
+
+jasypt:
+  encryptor:
+    bean: jasyptStringEncryptor
+    property:
+      prefix: ENC(
+      suffix: )

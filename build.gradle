@@ -36,6 +36,9 @@ dependencies {
     runtimeOnly 'org.postgresql:postgresql'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     annotationProcessor 'org.projectlombok:lombok'
+    implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.4'
+
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'io.projectreactor:reactor-test'
     testImplementation 'org.springframework.security:spring-security-test'
