@@ -34,4 +34,24 @@ public class TravelGroupMember {
     @Enumerated( EnumType.STRING )
     private TravelGroupRole travelGroupRole;
 
+    private TravelGroupMember ( TravelGroup travelGroup, Account account, TravelGroupRole travelGroupRole ) {
+        this.travelGroup = travelGroup;
+        this.account = account;
+        this.travelGroupRole = travelGroupRole;
+    }
+
+    private static TravelGroupMember of ( TravelGroup travelGroup, Account account, TravelGroupRole travelGroupRole ) {
+        return new TravelGroupMember( travelGroup, account, travelGroupRole );
+    }
+
+    public void addMember () {
+        this.travelGroup.getTravelGroupMemberList().add( this );
+        this.travelGroup.plusParticipant();
+    }
+
+    public void removeMember () {
+        this.travelGroup.getTravelGroupMemberList().remove( this );
+        this.travelGroup.minusParticipant();
+    }
+
 }
