@@ -134,11 +134,7 @@ public class Account extends UpdatedEntity {
         this.email = accountDto.getEmail();
         this.password = accountDto.getPassword();
     }
-
-    public static Account of ( String userName, String email, String password, Set<AccountRole> roles, int age, Set<TravelTheme> travelThemes ) {
-        return new Account( userName, email, password, roles, age, travelThemes );
-    }
-
+    
     public static Account createAccount ( AccountDto accountDto ) {
         return new Account( accountDto );
     }
