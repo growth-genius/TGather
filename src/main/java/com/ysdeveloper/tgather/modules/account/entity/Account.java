@@ -130,11 +130,11 @@ public class Account extends UpdatedEntity {
     }
 
     public Account ( AccountDto accountDto ) {
-        this.username = accountDto.getUserName();
+        this.username = accountDto.getUsername();
         this.email = accountDto.getEmail();
         this.password = accountDto.getPassword();
     }
-    
+
     public static Account createAccount ( AccountDto accountDto ) {
         return new Account( accountDto );
     }
