@@ -1,6 +1,9 @@
 package com.ysdeveloper.tgather.modules.account;
 
 import com.ysdeveloper.tgather.modules.account.dto.AccountDto;
+import com.ysdeveloper.tgather.modules.account.form.AccountSaveForm;
+import com.ysdeveloper.tgather.modules.account.form.AuthOtpCodeForm;
+import com.ysdeveloper.tgather.modules.account.form.SignInForm;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,14 +20,19 @@ public class AccountController {
     private final AccountService accountService;
 
     @PostMapping( "/add" )
-    public ResponseEntity<String> addUser ( @RequestBody @Valid AccountDto accountDto ) {
-        accountService.saveAccount( accountDto );
-        return ResponseEntity.ok( "success" );
+    public ResponseEntity<AccountDto> addUser ( @RequestBody @Valid AccountSaveForm accountSaveForm ) {
+        return ResponseEntity.ok( accountService.saveAccount( accountSaveForm ) );
     }
 
     @PostMapping( "/auth" )
-    public ResponseEntity<String> authUser ( @RequestBody AccountDto accountDto ) {
-        accountService.authAccount( accountDto );
-        return ResponseEntity.ok( "success" );
+    public ResponseEntity<String> authUser ( @RequestBody SignInForm signInForm ) {
+        accountService.authAccount( signInForm );
+        return ResponseEntity.ok( "create otpCode" );
+    }
+
+    @PostMapping( "/check" )
+    public ResponseEntity<String> validAuthUser ( @RequestBody AuthOtpCodeForm authOtpCodeForm ) {
+        accountService.validAuthUser( authOtpCodeForm );
+        return ResponsegEntity.ok( "success" );
     }
 }
