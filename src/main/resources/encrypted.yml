@@ -4,18 +4,7 @@ spring:
     url: ENC(Ey8MQ2rt1L65Th4A2CVOFE8QCZJdYZ5RYfyaSCmiWKdDMqGWo4lcBJ9qoaAMdwAaRXMCsZ22Xj8=)
     username: ENC(5RxqVoOaLfkqh3FGRRRC/r6e+hkWJgtr)
     password: ENC(jaN0ffgCGXju6GtewSTa6hwEiPRchMnt9sk5Bw+WJao=)
-  mail:
-    host: smtp.gmail.com
-    port: 587
-    username: ENC(IdJ4GnQm+C5WfqXXKmKWF9slbYD5wh/TmmmDHS74nO0=)
-    password: ENC(l5JF9Mh5ds3oYf6/sRNXySmGwmdqLdvHE1++gl28lRo=)
-    properties:
-      mail:
-        smtp:
-          auth: true
-          timeout: 5000
-          starttls:
-            enable: true
+
 cloud:
   aws:
     credentials:
