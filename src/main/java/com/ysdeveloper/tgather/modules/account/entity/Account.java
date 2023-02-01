@@ -89,8 +89,7 @@ public class Account extends UpdatedEntity {
 
     /** 인증용 otp 코드 */
     private String otpCode;
-
-    private LocalDateTime optCodeCreatedAt;
+    
     private LocalDateTime otpCodeModifiedAt;
 
     @OneToMany( mappedBy = "account", fetch = LAZY )
