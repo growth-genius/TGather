@@ -87,11 +87,13 @@ public class Account extends UpdatedEntity {
     /** 마지막 로그인 일자 */
     private LocalDateTime lastLoginAt;
 
+    /** 인증용 otp 코드 */
+    private String otpCode;
+
+    private LocalDateTime otpCodeModifiedAt;
+    
     @OneToMany( mappedBy = "account", fetch = LAZY )
     private List<TravelGroupMember> travelGroupMemberList = new ArrayList<>();
-
-    @OneToMany( mappedBy = "account", fetch = LAZY )
-    private List<Otp> otpList = new ArrayList<>();
 
     /** 로그인 후 세팅 */
     public void afterLoginSuccess () {
