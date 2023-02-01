@@ -4,7 +4,6 @@ import static jakarta.persistence.FetchType.LAZY;
 import static org.springframework.beans.BeanUtils.copyProperties;
 
 import com.ysdeveloper.tgather.infra.converter.StringEncryptConverter;
-import com.ysdeveloper.tgather.modules.account.dto.AccountDto;
 import com.ysdeveloper.tgather.modules.account.enums.AccountRole;
 import com.ysdeveloper.tgather.modules.account.enums.TravelTheme;
 import com.ysdeveloper.tgather.modules.account.form.AccountSaveForm;
@@ -129,14 +128,9 @@ public class Account extends UpdatedEntity {
         return new Account( accountSaveForm );
     }
 
-    public Account ( AccountDto accountDto ) {
-        this.username = accountDto.getUsername();
-        this.email = accountDto.getEmail();
-        this.password = accountDto.getPassword();
-    }
-
-    public static Account createAccount ( AccountDto accountDto ) {
-        return new Account( accountDto );
+    public void changeOtpCode ( String otpCode ) {
+        this.otpCode = otpCode;
+        this.otpCodeModifiedAt = LocalDateTime.now();
     }
 
 }
