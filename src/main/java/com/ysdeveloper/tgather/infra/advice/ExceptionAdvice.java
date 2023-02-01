@@ -6,8 +6,7 @@ import com.ysdeveloper.tgather.infra.advice.exceptions.BadRequestException;
 import com.ysdeveloper.tgather.infra.advice.exceptions.ExpiredTokenException;
 import com.ysdeveloper.tgather.modules.utils.ApiUtil;
 import jakarta.validation.ConstraintViolationException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,10 +16,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+@Slf4j
 @RestControllerAdvice
 public class ExceptionAdvice {
-
-    private final Logger log = LoggerFactory.getLogger( getClass() );
 
     private ResponseEntity<ApiUtil.ApiResult<?>> newResponse ( Throwable throwable, HttpStatus status ) {
         return newResponse( throwable.getMessage(), status );
