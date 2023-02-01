@@ -33,6 +33,6 @@ public class AccountController {
     @PostMapping( "/check" )
     public ResponseEntity<String> validAuthUser ( @RequestBody AuthOtpCodeForm authOtpCodeForm ) {
         accountService.validAuthUser( authOtpCodeForm );
-        return ResponsegEntity.ok( "success" );
+        return ResponseEntity.ok( "success" );
     }
 }
