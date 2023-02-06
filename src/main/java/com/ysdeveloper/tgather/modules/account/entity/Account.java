@@ -85,11 +85,6 @@ public class Account extends UpdatedEntity {
     /** 마지막 로그인 일자 */
     private LocalDateTime lastLoginAt;
 
-    /** 인증용 otp 코드 */
-    private String otpCode;
-
-    private LocalDateTime otpCodeModifiedAt;
-
     @OneToMany( mappedBy = "account", fetch = LAZY )
     private List<TravelGroupMember> travelGroupMemberList = new ArrayList<>();
 
@@ -126,10 +121,5 @@ public class Account extends UpdatedEntity {
         account.profileImage = accountSaveForm.getProfileImage();
         return account;
     }
-
-    public void changeOtpCode ( String otpCode ) {
-        this.otpCode = otpCode;
-        this.otpCodeModifiedAt = LocalDateTime.now();
-    }
-
+    
 }

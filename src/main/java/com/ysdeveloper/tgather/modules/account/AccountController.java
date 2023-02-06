@@ -2,7 +2,6 @@ package com.ysdeveloper.tgather.modules.account;
 
 import com.ysdeveloper.tgather.modules.account.dto.AccountDto;
 import com.ysdeveloper.tgather.modules.account.form.AccountSaveForm;
-import com.ysdeveloper.tgather.modules.account.form.AuthOtpCodeForm;
 import com.ysdeveloper.tgather.modules.account.form.SignInForm;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,15 +23,8 @@ public class AccountController {
         return ResponseEntity.ok( accountService.saveAccount( accountSaveForm ) );
     }
 
-    @PostMapping( "/auth" )
-    public ResponseEntity<String> authUser ( @RequestBody SignInForm signInForm ) {
-        accountService.authAccount( signInForm );
-        return ResponseEntity.ok( "create otpCode" );
-    }
-
     @PostMapping( "/check" )
-    public ResponseEntity<String> validAuthUser ( @RequestBody AuthOtpCodeForm authOtpCodeForm ) {
-        accountService.validAuthUser( authOtpCodeForm );
+    public ResponseEntity<String> validAuthUser ( @RequestBody SignInForm signInForm ) {
         return ResponseEntity.ok( "success" );
     }
 }
