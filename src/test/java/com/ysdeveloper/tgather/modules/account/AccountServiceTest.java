@@ -1,5 +1,7 @@
 package com.ysdeveloper.tgather.modules.account;
 
+import com.ysdeveloper.tgather.infra.annotation.ServiceTest;
+import com.ysdeveloper.tgather.infra.container.AbstractContainerBaseTest;
 import com.ysdeveloper.tgather.modules.account.dto.AccountDto;
 import com.ysdeveloper.tgather.modules.account.form.AccountSaveForm;
 import com.ysdeveloper.tgather.modules.account.repository.AccountRepository;
@@ -8,13 +10,10 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional
-@SpringBootTest
 @RequiredArgsConstructor
-class AccountServiceTest {
+@ServiceTest
+class AccountServiceTest extends AbstractContainerBaseTest {
 
     @Autowired
     private AccountRepository accountRepository;
@@ -34,5 +33,5 @@ class AccountServiceTest {
         AccountDto accountDto = accountService.saveAccount( accountSaveForm );
         Assertions.assertEquals( accountDto.getUsername(), accountSaveForm.getUsername() );
     }
-    
+
 }
