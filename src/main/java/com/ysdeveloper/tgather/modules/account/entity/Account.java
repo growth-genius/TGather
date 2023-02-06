@@ -1,7 +1,6 @@
 package com.ysdeveloper.tgather.modules.account.entity;
 
 import static jakarta.persistence.FetchType.LAZY;
-import static org.springframework.beans.BeanUtils.copyProperties;
 
 import com.ysdeveloper.tgather.infra.converter.StringEncryptConverter;
 import com.ysdeveloper.tgather.modules.account.enums.AccountRole;
@@ -9,7 +8,6 @@ import com.ysdeveloper.tgather.modules.account.enums.TravelTheme;
 import com.ysdeveloper.tgather.modules.account.form.AccountSaveForm;
 import com.ysdeveloper.tgather.modules.common.UpdatedEntity;
 import com.ysdeveloper.tgather.modules.travelgroup.entity.TravelGroupMember;
-import com.ysdeveloper.tgather.modules.utils.TimeUtil;
 import jakarta.persistence.Basic;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
@@ -89,7 +87,7 @@ public class Account extends UpdatedEntity {
 
     /** 인증용 otp 코드 */
     private String otpCode;
-    
+
     private LocalDateTime otpCodeModifiedAt;
 
     @OneToMany( mappedBy = "account", fetch = LAZY )
@@ -117,14 +115,16 @@ public class Account extends UpdatedEntity {
         this.nickname = nickname;
     }
 
-    private Account ( AccountSaveForm accountSaveForm ) {
-        copyProperties( accountSaveForm, this );
-        TimeUtil.getThisYear();
-        this.joinedAt = LocalDateTime.now();
-    }
-
+    // from
     public static Account from ( AccountSaveForm accountSaveForm ) {
-        return new Account( accountSaveForm );
+        Account account = new Account();
+        account.username = accountSaveForm.getUsername();
+        account.password = accountSaveForm.getPassword();
+        account.email = accountSaveForm.getEmail();
+        account.birth = accountSaveForm.getBirth();
+        account.nickname = accountSaveForm.getNickname();
+        account.profileImage = accountSaveForm.getProfileImage();
+        return account;
     }
 
     public void changeOtpCode ( String otpCode ) {
