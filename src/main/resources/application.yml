@@ -27,6 +27,5 @@ jasypt:
   encryptor:
     bean: jasyptStringEncryptor
 
-app:
-  hosts:
-    - http://localhost:5001
+
+
