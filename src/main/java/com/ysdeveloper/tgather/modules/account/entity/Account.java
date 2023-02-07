@@ -5,6 +5,7 @@ import static jakarta.persistence.FetchType.LAZY;
 import com.ysdeveloper.tgather.infra.converter.StringEncryptConverter;
 import com.ysdeveloper.tgather.modules.account.enums.AccountRole;
 import com.ysdeveloper.tgather.modules.account.enums.AccountStatus;
+import com.ysdeveloper.tgather.modules.account.enums.LoginType;
 import com.ysdeveloper.tgather.modules.account.enums.TravelTheme;
 import com.ysdeveloper.tgather.modules.account.form.AccountSaveForm;
 import com.ysdeveloper.tgather.modules.common.UpdatedEntity;
@@ -53,6 +54,8 @@ public class Account extends UpdatedEntity {
     private String email;
     /* 비밀번호 */
     private String password;
+    /* 로그인 형태 */
+    private LoginType loginType;
     /* 권한 */
     @ElementCollection( fetch = LAZY )
     @Enumerated( EnumType.STRING )
@@ -124,6 +127,7 @@ public class Account extends UpdatedEntity {
         account.birth = accountSaveForm.getBirth();
         account.nickname = accountSaveForm.getNickname();
         account.profileImage = accountSaveForm.getProfileImage();
+        account.loginType = LoginType.TGAHTER;
         return account;
     }
 
