@@ -2,6 +2,8 @@ package com.ysdeveloper.tgather.modules.account.entity;
 
 import static jakarta.persistence.FetchType.LAZY;
 
+import com.ysdeveloper.tgather.infra.advice.exceptions.BadRequestException;
+import com.ysdeveloper.tgather.infra.common.ErrorMessage;
 import com.ysdeveloper.tgather.infra.converter.StringEncryptConverter;
 import com.ysdeveloper.tgather.modules.account.enums.AccountRole;
 import com.ysdeveloper.tgather.modules.account.enums.AccountStatus;
@@ -31,6 +33,7 @@ import java.util.Set;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Entity
 @Getter
@@ -65,6 +68,10 @@ public class Account extends UpdatedEntity {
     private int age;
 
     private int birth;
+    /* 인증코드 */
+    private String authCode;
+
+    private LocalDateTime authCodeModifiedAt;
 
     /* 여행 테마 */
     @ElementCollection( fetch = LAZY )
@@ -131,4 +138,21 @@ public class Account extends UpdatedEntity {
         return account;
     }
 
+    public void generateAuthCode ( String authCode ) {
+        this.authCode = authCode;
+        this.authCodeModifiedAt = LocalDateTime.now();
+    }
+
+    public void login ( PasswordEncoder passwordEncoder, String credential ) {
+        if ( !passwordEncoder.matches( credential, this.password ) ) {
+            this.loginFailCount++;
+            throw new BadRequestException( ErrorMessage.NOT_MATCHED_ACCOUNT.getMessage() );
+        } else if ( this.accountStatus != AccountStatus.NORMAL ) {
+            throw new BadRequestException( ErrorMessage.VERIFY_EMAIL.getMessage() );
+        }
+    }
+
+    public void successAuthUser () {
+        this.accountStatus = AccountStatus.NORMAL;
+    }
 }

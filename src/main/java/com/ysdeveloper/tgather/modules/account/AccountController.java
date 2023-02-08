@@ -2,7 +2,7 @@ package com.ysdeveloper.tgather.modules.account;
 
 import com.ysdeveloper.tgather.modules.account.dto.AccountDto;
 import com.ysdeveloper.tgather.modules.account.form.AccountSaveForm;
-import com.ysdeveloper.tgather.modules.account.form.SignInForm;
+import com.ysdeveloper.tgather.modules.account.form.AuthCodeForm;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,8 +23,9 @@ public class AccountController {
         return ResponseEntity.ok( accountService.saveAccount( accountSaveForm ) );
     }
 
-    @PostMapping( "/check" )
-    public ResponseEntity<String> validAuthUser ( @RequestBody SignInForm signInForm ) {
-        return ResponseEntity.ok( "success" );
+    @PostMapping( "/auth" )
+    public ResponseEntity<AccountDto> authCode ( @RequestBody @Valid AuthCodeForm authCodeForm ) {
+        return ResponseEntity.ok( accountService.validAuthCode( authCodeForm ) );
     }
+
 }
