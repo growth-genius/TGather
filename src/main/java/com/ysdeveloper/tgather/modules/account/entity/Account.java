@@ -4,6 +4,7 @@ import static jakarta.persistence.FetchType.LAZY;
 
 import com.ysdeveloper.tgather.infra.converter.StringEncryptConverter;
 import com.ysdeveloper.tgather.modules.account.enums.AccountRole;
+import com.ysdeveloper.tgather.modules.account.enums.AccountStatus;
 import com.ysdeveloper.tgather.modules.account.enums.TravelTheme;
 import com.ysdeveloper.tgather.modules.account.form.AccountSaveForm;
 import com.ysdeveloper.tgather.modules.common.UpdatedEntity;
@@ -68,6 +69,10 @@ public class Account extends UpdatedEntity {
     @CollectionTable( name = "travel_themes", joinColumns = @JoinColumn( name = "account_id" ) )
     private Set<TravelTheme> travelThemes;
 
+    /** 계정 상태 */
+    @Enumerated( EnumType.STRING )
+    private AccountStatus accountStatus = AccountStatus.VERIFY_EMAIL;
+
     /** 프로필 이미지 */
     @Lob
     @Basic
@@ -121,5 +126,5 @@ public class Account extends UpdatedEntity {
         account.profileImage = accountSaveForm.getProfileImage();
         return account;
     }
-    
+
 }
