@@ -1,6 +1,6 @@
 package com.ysdeveloper.tgather.infra.advice;
 
-import static com.ysdeveloper.tgather.modules.utils.ApiUtil.error;
+import static com.ysdeveloper.tgather.modules.utils.ApiUtil.fail;
 
 import com.ysdeveloper.tgather.infra.advice.exceptions.BadRequestException;
 import com.ysdeveloper.tgather.infra.advice.exceptions.ExpiredTokenException;
@@ -27,7 +27,7 @@ public class ExceptionAdvice {
     private ResponseEntity<ApiUtil.ApiResult<?>> newResponse ( String message, HttpStatus status ) {
         HttpHeaders headers = new HttpHeaders();
         headers.add( "Content-Type", "application/json" );
-        return new ResponseEntity<>( error( message, status ), headers, status );
+        return new ResponseEntity<>( ApiUtil.fail( message, status ), headers, status );
     }
 
     @ExceptionHandler( Exception.class )
@@ -42,15 +42,15 @@ public class ExceptionAdvice {
         HttpHeaders headers = new HttpHeaders();
         headers.add( "Content-Type", "application/json" );
         log.error( "expiredTokenException : {} ", e.getMessage() );
-        return new ResponseEntity<>( error( e.getMessage(), -401 ), headers, HttpStatus.UNAUTHORIZED );
+        return new ResponseEntity<>( fail( e.getMessage(), -401 ), headers, HttpStatus.UNAUTHORIZED );
     }
 
     @ExceptionHandler( { IllegalArgumentException.class, IllegalStateException.class, ConstraintViolationException.class,
         MethodArgumentNotValidException.class, BadRequestException.class, HttpRequestMethodNotSupportedException.class } )
     public ResponseEntity<?> handleBadRequestException ( Exception e ) {
         log.error( "Bad request exception occurred: {}", e.getMessage(), e );
-        if ( e instanceof MethodArgumentNotValidException ) {
-            return newResponse( ( (MethodArgumentNotValidException) e ).getBindingResult().getAllErrors().get( 0 ).getDefaultMessage(),
+        if ( e instanceof MethodArgumentNotValidException methodargumentnotvalidexception ) {
+            return newResponse( methodargumentnotvalidexception.getBindingResult().getAllErrors().get( 0 ).getDefaultMessage(),
                                 HttpStatus.BAD_REQUEST );
         }
         return newResponse( e, HttpStatus.BAD_REQUEST );

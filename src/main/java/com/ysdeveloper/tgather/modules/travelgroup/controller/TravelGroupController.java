@@ -1,7 +1,5 @@
 package com.ysdeveloper.tgather.modules.travelgroup.controller;
 
-import static com.ysdeveloper.tgather.modules.utils.ApiUtil.ok;
-
 import com.ysdeveloper.tgather.modules.common.annotation.RestBaseAnnotation;
 import com.ysdeveloper.tgather.modules.travelgroup.dto.TravelGroupDTO;
 import com.ysdeveloper.tgather.modules.travelgroup.form.TravelGroupForm;
@@ -22,7 +20,7 @@ public class TravelGroupController {
 
     @PostMapping
     public ApiUtil.ApiResult<TravelGroupDTO> createTravelGroup ( @RequestBody @Valid TravelGroupForm travelGroupForm ) {
-        return ok( travelGroupService.createTravelGroup( travelGroupForm ) );
+        return ApiUtil.success( travelGroupService.createTravelGroup( travelGroupForm ) );
     }
 
 }
