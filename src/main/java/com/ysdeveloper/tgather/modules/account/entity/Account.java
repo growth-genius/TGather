@@ -4,7 +4,6 @@ import static jakarta.persistence.FetchType.LAZY;
 
 import com.ysdeveloper.tgather.infra.advice.exceptions.BadRequestException;
 import com.ysdeveloper.tgather.infra.common.ErrorMessage;
-import com.ysdeveloper.tgather.infra.converter.StringEncryptConverter;
 import com.ysdeveloper.tgather.modules.account.enums.AccountRole;
 import com.ysdeveloper.tgather.modules.account.enums.AccountStatus;
 import com.ysdeveloper.tgather.modules.account.enums.LoginType;
@@ -15,7 +14,6 @@ import com.ysdeveloper.tgather.modules.travelgroup.entity.TravelGroupMember;
 import jakarta.persistence.Basic;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -53,7 +51,6 @@ public class Account extends UpdatedEntity {
     /* 사용자 별명 */
     private String nickname;
     /* 이메일 */
-    @Convert( converter = StringEncryptConverter.class )
     private String email;
     /* 비밀번호 */
     private String password;
@@ -102,7 +99,7 @@ public class Account extends UpdatedEntity {
 
     @OneToMany( mappedBy = "account", fetch = LAZY )
     private List<TravelGroupMember> travelGroupMemberList = new ArrayList<>();
-
+    
     /** 로그인 후 세팅 */
     public void afterLoginSuccess () {
         this.loginFailCount = 0;
@@ -135,6 +132,7 @@ public class Account extends UpdatedEntity {
         account.nickname = accountSaveForm.getNickname();
         account.profileImage = accountSaveForm.getProfileImage();
         account.loginType = LoginType.TGAHTER;
+        account.joinedAt = LocalDateTime.now();
         return account;
     }
 

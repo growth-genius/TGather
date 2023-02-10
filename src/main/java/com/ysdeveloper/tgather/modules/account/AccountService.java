@@ -38,19 +38,19 @@ public class AccountService {
             throw new BadCredentialsException( "이미 존재하는 닉네임입니다." );
         } );
         Account account = Account.from( accountSaveForm );
-        account.generateAuthCode( sendSignUpConfirmEmail( account ) );
+        account.generateAuthCode( sendSignUpConfirmEmail( account.getEmail() ) );
         accountRepository.save( account );
         return AccountDto.from( account );
     }
 
     /**
      * 이메일 인증코드 전송
-     * @param account
+     * @param email
      * @return authCode
      */
-    private String sendSignUpConfirmEmail ( Account account ) {
+    private String sendSignUpConfirmEmail ( String email ) {
         String authCode = RandomStringUtils.randomAlphanumeric( 12 );
-        EmailMessage emailMessage = EmailMessage.builder().to( account.getEmail() ).subject( "TGather 회원가입 인증 메일" ).message( authCode ).build();
+        EmailMessage emailMessage = EmailMessage.builder().to( email ).subject( "TGather 회원가입 인증 메일" ).message( authCode ).build();
         emailService.sendEmail( emailMessage );
         return authCode;
     }

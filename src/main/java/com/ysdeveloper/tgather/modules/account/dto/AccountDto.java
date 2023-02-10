@@ -2,6 +2,8 @@ package com.ysdeveloper.tgather.modules.account.dto;
 
 import static org.springframework.beans.BeanUtils.copyProperties;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.ysdeveloper.tgather.infra.security.Jwt;
 import com.ysdeveloper.tgather.modules.account.entity.Account;
 import com.ysdeveloper.tgather.modules.account.enums.AccountRole;
@@ -12,6 +14,7 @@ import lombok.Builder;
 import lombok.Data;
 
 @Data
+@JsonInclude( Include.NON_NULL )
 public class AccountDto {
 
     /** 로그인 아이디 */
@@ -31,14 +34,15 @@ public class AccountDto {
     private int loginCount;
     /** 마지막 로그인 일자 */
     private LocalDateTime lastLoginAt;
-    private String accessToken;
-    private String refreshToken;
 
     private String profileImage;
     private LoginType loginType;
+    private String accessToken;
+    private String refreshToken;
 
     AccountDto ( Account account ) {
-        copyProperties( account, this );
+        copyProperties( account, this, "password" );
+        this.accountId = account.getId();
     }
 
     public static AccountDto from ( Account account ) {
@@ -52,6 +56,8 @@ public class AccountDto {
     }
 
     public void generateAccessToken ( Jwt jwt ) {
-
+        Jwt.Claims claims = Jwt.Claims.of( accountId, email, roles.stream().map( AccountRole::name ).toArray( String[]::new ) );
+        this.accessToken = jwt.createAccessToken( claims );
+        this.refreshToken = jwt.createRefreshToken( claims );
     }
 }
