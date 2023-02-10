@@ -22,6 +22,7 @@ app:
     - http://localhost:5001
 
 jwt:
-  header: Authorziation
+  header: Authorization
+  issuer: tgather
   secret: VEdhdGhlci1wcm9qZWN0Cg==
   token-validity-in-seconds: 86400

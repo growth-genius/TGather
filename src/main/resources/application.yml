@@ -4,10 +4,6 @@ spring:
       - local
     include:
       - common
-  jpa:
-    show-sql: true
-    hibernate:
-      ddl-auto: none
   flyway:
     enabled: true
     baseline-on-migrate: true
