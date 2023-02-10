@@ -31,7 +31,7 @@ class AccountServiceTest extends AbstractContainerBaseTest {
         accountSaveForm.setPassword( "yejiCho" );
 
         AccountDto accountDto = accountService.saveAccount( accountSaveForm );
-        Assertions.assertEquals( accountDto.getUsername(), accountSaveForm.getUsername() );
+        Assertions.assertEquals( accountDto.getUserName(), accountSaveForm.getUsername() );
     }
 
 }
