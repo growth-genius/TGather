@@ -9,7 +9,9 @@ import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import java.util.Date;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class Jwt {
 
     private final String issuer;
@@ -24,12 +26,6 @@ public class Jwt {
         this.jwtVerifier = JWT.require( algorithm ).withIssuer( issuer ).build();
     }
 
-    public String createAccessToken ( Claims claims ) {
-        // 5분 동안만 토큰 유효
-        long tokenValidationSecond = 1000L * 60 * 5;
-        return createToken( claims, tokenValidationSecond );
-    }
-
     public String createToken ( Claims claims, long expireTime ) {
         Date now = new Date();
         JWTCreator.Builder builder = JWT.create();
@@ -40,6 +36,18 @@ public class Jwt {
         builder.withClaim( JwtInfo.EMAIL.name(), claims.email );
         builder.withArrayClaim( JwtInfo.ROLES.name(), claims.roles );
         return builder.sign( algorithm );
+    }
+
+    public String createAccessToken ( Claims claims ) {
+        // 5분 동안만 토큰 유효
+        long tokenValidationSecond = 1000L * 60 * 5;
+        return createToken( claims, tokenValidationSecond );
+    }
+
+    public String createRefreshToken ( Claims claims ) {
+        // 30분 동안 유효한 리프레시 토큰
+        long refreshTokenValidationSecond = 1000L * 60 * 30;
+        return createToken( claims, refreshTokenValidationSecond );
     }
 
     public Claims verify ( String token ) throws JWTVerificationException {
