@@ -17,27 +17,25 @@ class JasyptConfigTest {
     private StringEncryptor jasyptStringEncryptor;
 
     @Test
-    void _0_testInit () {
-        assertThat( jasyptStringEncryptor ).isNotNull();
+    void _0_testInit() {
+        assertThat(jasyptStringEncryptor).isNotNull();
     }
 
     @Test
-    void _1_encrypt_decrypt () {
+    void _1_encrypt_decrypt() {
 
         String orgText = "dPwldidnfltjdrhdgkwk";
 
-        String encText = jasyptStringEncryptor.encrypt( orgText );
+        String encText = jasyptStringEncryptor.encrypt(orgText);
 
-        System.out.println( "encText:: " + encText );
+        System.out.println("encText:: " + encText);
 
-        String decrypt = jasyptStringEncryptor.decrypt( encText );
+        String decrypt = jasyptStringEncryptor.decrypt(encText);
 
-        System.out.println( "decrypt:: {}" + decrypt );
+        System.out.println("decrypt:: {}" + decrypt);
 
-        assertEquals( orgText, decrypt );
+        assertEquals(orgText, decrypt);
 
-        log.error( jasyptStringEncryptor.encrypt( "AKIAXSCQ3NCOPIDPY2JG" ) );
-        log.error( jasyptStringEncryptor.encrypt( "dnk4uTi/RxxZbIfxMm62fV0+aWdJ7E8BW7wQjQwp" ) );
 
     }
 }
