@@ -18,4 +18,5 @@ public class CredentialInfo {
         this.credential = password;
         this.loginType = LoginType.TGAHTER;
     }
+
 }

@@ -84,4 +84,9 @@ public class AccountService {
         account.successAuthUser();
         return AccountDto.createByAccountAndGenerateAccessToken( account, jwt );
     }
+
+    public AccountDto findByEmail(String email, LoginType loginType) {
+        Account account = accountRepository.findByEmailAndLoginType( email, loginType ).orElseThrow();
+        return AccountDto.from(account);
+    }
 }
