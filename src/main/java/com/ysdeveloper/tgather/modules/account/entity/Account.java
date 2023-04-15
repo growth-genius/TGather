@@ -1,19 +1,19 @@
 package com.ysdeveloper.tgather.modules.account.entity;
 
 import static jakarta.persistence.FetchType.LAZY;
-import static org.springframework.beans.BeanUtils.copyProperties;
 
-import com.ysdeveloper.tgather.infra.converter.StringEncryptConverter;
+import com.ysdeveloper.tgather.infra.advice.exceptions.BadRequestException;
+import com.ysdeveloper.tgather.infra.common.ErrorMessage;
 import com.ysdeveloper.tgather.modules.account.enums.AccountRole;
+import com.ysdeveloper.tgather.modules.account.enums.AccountStatus;
+import com.ysdeveloper.tgather.modules.account.enums.LoginType;
 import com.ysdeveloper.tgather.modules.account.enums.TravelTheme;
 import com.ysdeveloper.tgather.modules.account.form.AccountSaveForm;
 import com.ysdeveloper.tgather.modules.common.UpdatedEntity;
 import com.ysdeveloper.tgather.modules.travelgroup.entity.TravelGroupMember;
-import com.ysdeveloper.tgather.modules.utils.TimeUtil;
 import jakarta.persistence.Basic;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -31,6 +31,7 @@ import java.util.Set;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Entity
 @Getter
@@ -50,10 +51,11 @@ public class Account extends UpdatedEntity {
     /* 사용자 별명 */
     private String nickname;
     /* 이메일 */
-    @Convert( converter = StringEncryptConverter.class )
     private String email;
     /* 비밀번호 */
     private String password;
+    /* 로그인 형태 */
+    private LoginType loginType;
     /* 권한 */
     @ElementCollection( fetch = LAZY )
     @Enumerated( EnumType.STRING )
@@ -63,12 +65,20 @@ public class Account extends UpdatedEntity {
     private int age;
 
     private int birth;
+    /* 인증코드 */
+    private String authCode;
+
+    private LocalDateTime authCodeModifiedAt;
 
     /* 여행 테마 */
     @ElementCollection( fetch = LAZY )
     @Enumerated( EnumType.STRING )
     @CollectionTable( name = "travel_themes", joinColumns = @JoinColumn( name = "account_id" ) )
     private Set<TravelTheme> travelThemes;
+
+    /** 계정 상태 */
+    @Enumerated( EnumType.STRING )
+    private AccountStatus accountStatus = AccountStatus.VERIFY_EMAIL;
 
     /** 프로필 이미지 */
     @Lob
@@ -87,15 +97,9 @@ public class Account extends UpdatedEntity {
     /** 마지막 로그인 일자 */
     private LocalDateTime lastLoginAt;
 
-    /** 인증용 otp 코드 */
-    private String otpCode;
-
-    private LocalDateTime optCodeCreatedAt;
-    private LocalDateTime otpCodeModifiedAt;
-
     @OneToMany( mappedBy = "account", fetch = LAZY )
     private List<TravelGroupMember> travelGroupMemberList = new ArrayList<>();
-
+    
     /** 로그인 후 세팅 */
     public void afterLoginSuccess () {
         this.loginFailCount = 0;
@@ -118,14 +122,35 @@ public class Account extends UpdatedEntity {
         this.nickname = nickname;
     }
 
-    private Account ( AccountSaveForm accountSaveForm ) {
-        copyProperties( accountSaveForm, this );
-        TimeUtil.getThisYear();
-        this.joinedAt = LocalDateTime.now();
-    }
-
+    // from
     public static Account from ( AccountSaveForm accountSaveForm ) {
-        return new Account( accountSaveForm );
+        Account account = new Account();
+        account.username = accountSaveForm.getUsername();
+        account.password = accountSaveForm.getPassword();
+        account.email = accountSaveForm.getEmail();
+        account.birth = accountSaveForm.getBirth();
+        account.nickname = accountSaveForm.getNickname();
+        account.profileImage = accountSaveForm.getProfileImage();
+        account.loginType = LoginType.TGAHTER;
+        account.joinedAt = LocalDateTime.now();
+        return account;
     }
 
+    public void generateAuthCode ( String authCode ) {
+        this.authCode = authCode;
+        this.authCodeModifiedAt = LocalDateTime.now();
+    }
+
+    public void login ( PasswordEncoder passwordEncoder, String credential ) {
+        if ( !passwordEncoder.matches( credential, this.password ) ) {
+            this.loginFailCount++;
+            throw new BadRequestException( ErrorMessage.NOT_MATCHED_ACCOUNT.getMessage() );
+        } else if ( this.accountStatus != AccountStatus.NORMAL ) {
+            throw new BadRequestException( ErrorMessage.VERIFY_EMAIL.getMessage() );
+        }
+    }
+
+    public void successAuthUser () {
+        this.accountStatus = AccountStatus.NORMAL;
+    }
 }

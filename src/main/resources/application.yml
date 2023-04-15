@@ -4,17 +4,24 @@ spring:
       - local
     include:
       - common
-  jpa:
-    show-sql: true
-    hibernate:
-      ddl-auto: none
   flyway:
     enabled: true
     baseline-on-migrate: true
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ENC(IdJ4GnQm+C5WfqXXKmKWF9slbYD5wh/TmmmDHS74nO0=)
+    password: ENC(l5JF9Mh5ds3oYf6/sRNXySmGwmdqLdvHE1++gl28lRo=)
+    properties:
+      mail:
+        smtp:
+          auth: true
+          timeout: 5000
+          starttls:
+            enable: true
 jasypt:
   encryptor:
     bean: jasyptStringEncryptor
 
-app:
-  hosts:
-    - http://localhost:5001
+
+

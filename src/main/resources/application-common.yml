@@ -17,3 +17,12 @@ jasypt:
   encryptor:
     bean: jasyptStringEncryptor
 
+app:
+  hosts:
+    - http://localhost:5001
+
+jwt:
+  header: Authorization
+  issuer: tgather
+  secret: VEdhdGhlci1wcm9qZWN0Cg==
+  token-validity-in-seconds: 86400

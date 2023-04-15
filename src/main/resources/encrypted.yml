@@ -4,6 +4,7 @@ spring:
     url: ENC(Ey8MQ2rt1L65Th4A2CVOFE8QCZJdYZ5RYfyaSCmiWKdDMqGWo4lcBJ9qoaAMdwAaRXMCsZ22Xj8=)
     username: ENC(5RxqVoOaLfkqh3FGRRRC/r6e+hkWJgtr)
     password: ENC(jaN0ffgCGXju6GtewSTa6hwEiPRchMnt9sk5Bw+WJao=)
+
 cloud:
   aws:
     credentials:
