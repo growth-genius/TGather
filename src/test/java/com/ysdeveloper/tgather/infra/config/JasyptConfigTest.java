@@ -22,13 +22,13 @@ class JasyptConfigTest {
     }
 
     @Test
-    void _1_encrypt_decrypt() {
+    void _1_encrypt_decrypt () {
 
         String orgText = "dPwldidnfltjdrhdgkwk";
 
         String encText = jasyptStringEncryptor.encrypt(orgText);
 
-        System.out.println("encText:: " + encText);
+        System.out.println( "encText:: " + encText );
 
         String decrypt = jasyptStringEncryptor.decrypt(encText);
 
