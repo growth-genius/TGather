@@ -8,12 +8,8 @@ spring:
 cloud:
   aws:
     credentials:
-      # access-key: ENC(E07zGZYYJL3jQR9cH6jBzirb6ZJRy8kL2e+bVuelrJg=)
-      # access-key: ENC(Ja7+QsnMEimHGKmOYo4fBoMMb2WlH+qa2TL8n3eK018=)
-      access-key: ENC(v6tTmANYePlNJcit5IncpBbBXQqWrIMEVXEUmXZYeDE=)
-      # secret-key: ENC(k6ej1v44RB9mhZjmRQi6qyhJDWMNbQ7rwdOEn8H/UUs9XAK7cueiYXRBPkQbI7x0drloPTSzCgg=)
-      # secret-key: ENC(oQAHVbxN9wzcFjDUfAV9aHoF3EhrMU39k7mvnARJKge50w9FMnv8pFqtMro6bywh7bsCB0aeo+o=)
-      secret-key: ENC(fHUHpAb9Po8oC10xNjtliBzAX4CQdlc8yOFXbz+WZ/kJVOuWRaDV2oURtfOtr8zeKsJl+CeMD8A=)
+      access-key: ENC(W2wrTDVaWIaUSAsPCY3LIgKi190lDZivG7gCzLW4gkY=)
+      secret-key: ENC(RcC2O9GgXXxqeTNTjJccvdT96I9EMWOSnthGwWMCh4MTduXVySEYS9ohdYEh8dEBKiTf0q7cMl8=)
     s3:
       bucket: t-gather
     region:
