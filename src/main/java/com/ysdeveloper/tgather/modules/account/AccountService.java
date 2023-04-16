@@ -37,13 +37,28 @@ public class AccountService {
     public AccountDto saveAccount ( AccountSaveForm accountSaveForm ) {
         accountSaveForm.setPassword( passwordEncoder.encode( accountSaveForm.getPassword() ) );
 
-        accountRepository.findByNickname( accountSaveForm.getNickname() ).ifPresent( account -> {
-            throw new BadCredentialsException( "이미 존재하는 닉네임입니다." );
-        } );
+        validateAccount( accountSaveForm );
+
         Account account = Account.from( accountSaveForm );
         account.generateAuthCode( sendSignUpConfirmEmail( account.getEmail() ) );
         accountRepository.save( account );
         return AccountDto.from( account );
+    }
+
+    /**
+     * 입력된 정보 확인
+     * @param accountSaveForm
+     */
+    private void validateAccount ( AccountSaveForm accountSaveForm ) {
+
+        if ( validNickname( accountSaveForm.getNickname() ) ) {
+            throw new BadCredentialsException( "이미 존재하는 닉네임입니다." );
+        }
+
+        accountRepository.findByEmail( accountSaveForm.getEmail() ).ifPresent( account -> {
+            throw new BadCredentialsException( "이미 존재하는 이메일입니다." );
+        } );
+
     }
 
     /**
@@ -65,8 +80,8 @@ public class AccountService {
      * @return AccountDto
      */
     public AccountDto login ( String email, CredentialInfo credential ) {
-        Account account = accountRepository.findByEmailAndLoginType( email, credential.getLoginType() ).orElseThrow( () -> new NotFoundException(
-            "등록된 계정이 없습니다." ) );
+        Account account = accountRepository.findByEmailAndLoginType( email, credential.getLoginType() ).orElseThrow(
+            () -> new NotFoundException( "등록된 계정이 없습니다." ) );
         account.login( passwordEncoder, credential.getCredential() );
         account.afterLoginSuccess();
         return AccountDto.createByAccountAndGenerateAccessToken( account, jwt );
@@ -78,8 +93,8 @@ public class AccountService {
      * @return AccountDto
      */
     public AccountDto validAuthCode ( AuthCodeForm authCodeForm ) {
-        Account account = accountRepository.findByEmailAndLoginType( authCodeForm.getEmail(), LoginType.TGAHTER )
-                                           .orElseThrow( () -> new NotFoundException( "등록된 계정이 없습니다." ) );
+        Account account = accountRepository.findByEmailAndLoginType( authCodeForm.getEmail(), LoginType.TGAHTER ).orElseThrow(
+            () -> new NotFoundException( "등록된 계정이 없습니다." ) );
 
         if ( !account.getAuthCode().equals( authCodeForm.getAuthCode() ) ) {
             throw new BadCredentialsException( "인증 코드가 잘못되었습니다. 다시 확인해주세요." );
@@ -96,8 +111,8 @@ public class AccountService {
     public TokenDto renewalTokenByRefreshToken ( TokenDto tokenDto ) {
         if ( jwt.validateToken( tokenDto.getRefreshToken() ) ) {
             Claims claims = jwt.verify( tokenDto.getRefreshToken() );
-            Account account = accountRepository.findByEmailAndLoginType( claims.getEmail(), LoginType.TGAHTER )
-                                               .orElseThrow( () -> new NotFoundException( "이메일을 찾을 수 없습니다." ) );
+            Account account = accountRepository.findByEmailAndLoginType( claims.getEmail(), LoginType.TGAHTER ).orElseThrow(
+                () -> new NotFoundException( "이메일을 찾을 수 없습니다." ) );
             AccountDto accountDto = AccountDto.createByAccountAndGenerateAccessToken( account, jwt );
             tokenDto = TokenDto.builder().accessToken( accountDto.getAccessToken() ).refreshToken( accountDto.getRefreshToken() ).build();
         } else {
@@ -111,7 +126,8 @@ public class AccountService {
      * @param nickName
      * @return boolean
      */
-    public boolean validNickname ( String nickName ) {
+    boolean validNickname ( String nickName ) {
         return accountRepository.findByNickname( nickName ).isPresent();
     }
+
 }
