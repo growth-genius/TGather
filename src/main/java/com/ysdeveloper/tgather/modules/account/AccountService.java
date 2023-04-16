@@ -1,10 +1,12 @@
 package com.ysdeveloper.tgather.modules.account;
 
+import com.ysdeveloper.tgather.infra.advice.exceptions.ExpiredTokenException;
 import com.ysdeveloper.tgather.infra.advice.exceptions.NotFoundException;
 import com.ysdeveloper.tgather.infra.mail.EmailMessage;
 import com.ysdeveloper.tgather.infra.mail.EmailService;
 import com.ysdeveloper.tgather.infra.security.CredentialInfo;
 import com.ysdeveloper.tgather.infra.security.Jwt;
+import com.ysdeveloper.tgather.infra.security.Jwt.Claims;
 import com.ysdeveloper.tgather.modules.account.dto.AccountDto;
 import com.ysdeveloper.tgather.modules.account.entity.Account;
 import com.ysdeveloper.tgather.modules.account.enums.LoginType;
@@ -12,6 +14,7 @@ import com.ysdeveloper.tgather.modules.account.form.AccountSaveForm;
 import com.ysdeveloper.tgather.modules.account.form.AuthCodeForm;
 import com.ysdeveloper.tgather.modules.account.repository.AccountRepository;
 import com.ysdeveloper.tgather.modules.common.annotation.BaseServiceAnnotation;
+import com.ysdeveloper.tgather.modules.main.dto.TokenDto;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -85,8 +88,30 @@ public class AccountService {
         return AccountDto.createByAccountAndGenerateAccessToken( account, jwt );
     }
 
-    public AccountDto findByEmail(String email, LoginType loginType) {
-        Account account = accountRepository.findByEmailAndLoginType( email, loginType ).orElseThrow();
-        return AccountDto.from(account);
+    /**
+     * 토큰 갱신
+     * @param tokenDto
+     * @return TokenDto
+     */
+    public TokenDto renewalTokenByRefreshToken ( TokenDto tokenDto ) {
+        if ( jwt.validateToken( tokenDto.getRefreshToken() ) ) {
+            Claims claims = jwt.verify( tokenDto.getRefreshToken() );
+            Account account = accountRepository.findByEmailAndLoginType( claims.getEmail(), LoginType.TGAHTER )
+                                               .orElseThrow( () -> new NotFoundException( "이메일을 찾을 수 없습니다." ) );
+            AccountDto accountDto = AccountDto.createByAccountAndGenerateAccessToken( account, jwt );
+            tokenDto = TokenDto.builder().accessToken( accountDto.getAccessToken() ).refreshToken( accountDto.getRefreshToken() ).build();
+        } else {
+            throw new ExpiredTokenException();
+        }
+        return tokenDto;
+    }
+
+    /**
+     * nickName 중복확인
+     * @param nickName
+     * @return boolean
+     */
+    public boolean validNickname ( String nickName ) {
+        return accountRepository.findByNickname( nickName ).isPresent();
     }
 }
