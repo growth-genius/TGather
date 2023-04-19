@@ -75,27 +75,13 @@ public class SecurityConfig {
             .and()
             .cors()
             // .configurationSource(request -> new CorsConfiguration(setCorsConfig()).applyPermitDefaultValues())
-            .configurationSource( corsConfigurationSource() )
-            .and()
-            .authorizeRequests()
-            .requestMatchers( "/*",
-                              "/api/sign-in",
-                              "/api/account/sign-up",
-                              "/api/account/check-email",
-                              "/api/account/check-email-token/**",
-                              "/api/email-login",
-                              "/api/check-email-login",
-                              "/api/account/login",
-                              "/h2-console/**",
-                              "/api/sign/refresh-token/**",
-                              "/api/employee/positions" )
-            .permitAll()
-            .requestMatchers( HttpMethod.GET, "/api/profile/*" )
-            .permitAll()
-            .requestMatchers( "/api/**" )
-            .hasRole( "USER" )
-            .and()
-            .addFilterBefore( jwtAuthenticationTokenFilter(), UsernamePasswordAuthenticationFilter.class );
+            .configurationSource( corsConfigurationSource() ).and().authorizeRequests().requestMatchers( "/*", "/api/sign-in", "/api/account/sign-up",
+                                                                                                         "/api/account/check-email",
+                                                                                                         "/api/account/check-nickname/**",
+                                                                                                         "/api/account/login",
+                                                                                                         "/api/account/refresh-token/**" ).permitAll()
+            .requestMatchers( HttpMethod.GET, "/api/profile/*" ).permitAll().requestMatchers( "/api/**" ).hasRole( "USER" ).and().addFilterBefore(
+                jwtAuthenticationTokenFilter(), UsernamePasswordAuthenticationFilter.class );
         return http.build();
     }
 
