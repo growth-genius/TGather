@@ -36,7 +36,9 @@ pipeline {
           }
       }
       stage("Docker Pushed Image delete") {
-          sh(script: "docker rmi ${HARBOR_URL}/${HARBOR_PROJECT}/${IMAGE_NAME}:latest || true")
+          steps{
+            sh(script: "docker rmi ${HARBOR_URL}/${HARBOR_PROJECT}/${IMAGE_NAME}:latest || true")
+          }
       }
   }
 }
