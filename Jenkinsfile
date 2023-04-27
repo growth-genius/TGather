@@ -13,7 +13,7 @@ pipeline {
         }
         stage('Build'){
              sh(script: "chmod +x gradlew")
-             sh(script: "./gradlew clean bootBuildImage --imageName=${IMAGE_NAME}:latest")
+             sh(script: "./gradlew clean bootBuildImage --imageName=${IMAGE_NAME}")
         }
         stage('Tag'){
             sh(script: "docker tag ${IMAGE_NAME}:latest ${HARBOR_URL}/${HARBOR_USER}/${IMAGE_NAME}:latest")
@@ -33,6 +33,6 @@ pipeline {
         }
     }
   }catch (e) {
-  
+
   }
 }
