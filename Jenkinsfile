@@ -15,8 +15,11 @@ pipeline {
         }
         stage('Build'){
           steps{
-                sh(script: "chmod +x gradlew")
-               sh(script: "./gradlew clean bootBuildImage --imageName=${IMAGE_NAME}")
+                /* sh(script: "chmod +x gradlew")
+                sh(script: "./gradlew clean bootBuildImage --imageName=${IMAGE_NAME}") */
+                sh(script: "docker build -t ${IMAGE_NAME} .")
+        }
+
           }
         }
         stage('Tag'){
