@@ -1,6 +1,5 @@
 pipeline {
   agent any
-  try {
     stages{
         // git clone
         stage('Clone') {
@@ -43,6 +42,4 @@ pipeline {
             }
         }
     }
-  }catch (e) {
-  }
 }
