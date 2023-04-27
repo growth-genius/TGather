@@ -3,7 +3,7 @@ pipeline {
       // git clone
       stage('Clone') {
           steps {
-              git branch: 'settings', credentialsId: ${CREDENTIALSID}, url: ${GIT_URL}
+              git branch: 'setting', credentialsId: ${CREDENTIALSID}, url: ${GIT_URL}
           }
       }
       stage("Delete") {
