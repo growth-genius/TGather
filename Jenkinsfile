@@ -19,12 +19,7 @@ pipeline {
                 // sh(script: "chmod +x gradlew")
                 // sh(script: "./gradlew clean bootBuildImage --imageName=${IMAGE_NAME}")
                 sh(script: "docker build -t ${IMAGE_NAME}:latest .")
-          }
-        }
-        stage('push') {
-          steps{
-             // This step should not normally be used in your script. Consult the inline help for details.
-              withDockerRegistry(credentialsId: 'docker-hub', url: '') {
+                withDockerRegistry(credentialsId: 'docker-hub', url: '') {
                   // some block
                   sh(script: "docker push ${IMAGE_NAME}:latest")
               }
