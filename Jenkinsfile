@@ -24,7 +24,7 @@ pipeline {
         stage('push') {
           steps{
              // This step should not normally be used in your script. Consult the inline help for details.
-              withDockerRegistry(credentialsId: 'docker-hub', url: 'https://hub.docker.com') {
+              withDockerRegistry(credentialsId: 'docker-hub', url: '') {
                   // some block
                   sh(script: "docker push ${IMAGE_NAME}:latest")
               }
