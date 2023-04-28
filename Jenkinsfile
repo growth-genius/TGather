@@ -13,6 +13,10 @@ pipeline {
               sh(script: 'docker rmi $(docker images -f "dangling=true" -q) || true')
             }
         }
+
+        stage('build bootJar') {
+          sh(script: "./gradlew clean bootJar")
+        }
         stage('Build'){
           steps{
                 sh(script: "chmod +x gradlew")
