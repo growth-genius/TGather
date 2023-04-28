@@ -21,7 +21,7 @@ pipeline {
                 sh(script: "docker build -t ${IMAGE_NAME}:latest .")
                 withDockerRegistry(credentialsId: 'docker-hub', url: '') {
                   // some block
-                  sh(script: "docker push ${HARBOR_USER}/${IMAGE_NAME}:latest")
+                  sh(script: "docker push ${IMAGE_NAME}:latest ${HARBOR_USER}/${IMAGE_NAME}:latest")
               }
           }
         }
