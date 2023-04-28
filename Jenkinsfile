@@ -15,7 +15,9 @@ pipeline {
         }
 
         stage('build bootJar') {
-          sh(script: "./gradlew clean bootJar")
+          steps {
+            sh(script: "./gradlew clean bootJar")
+          }
         }
         stage('Build'){
           steps{
