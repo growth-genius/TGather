@@ -7,6 +7,12 @@ pipeline {
                 checkout scm
             }
         }
+
+        stage("who") {
+          steps {
+            sh(script: "who -m")
+          }
+        }
         stage("Delete") {
             steps{
               sh(script: "docker rmi ${IMAGE_NAME}  || true")
@@ -14,11 +20,6 @@ pipeline {
             }
         }
 
-        stage('build bootJar') {
-          steps {
-            sh(script: "./gradlew clean bootJar")
-          }
-        }
         stage('Build'){
           steps{
                 sh(script: "chmod +x gradlew")
