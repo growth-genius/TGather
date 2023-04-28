@@ -7,12 +7,6 @@ pipeline {
                 checkout scm
             }
         }
-
-        stage("who") {
-          steps {
-            sh(script: "who -m")
-          }
-        }
         stage("Delete") {
             steps{
               sh(script: "docker rmi ${IMAGE_NAME}  || true")
@@ -22,9 +16,9 @@ pipeline {
 
         stage('Build'){
           steps{
-                sh(script: "chmod +x gradlew")
-                sh(script: "./gradlew clean bootBuildImage --imageName=${IMAGE_NAME}")
-              // sh(script: "docker build -t ${IMAGE_NAME}:latest .")
+                // sh(script: "chmod +x gradlew")
+                // sh(script: "./gradlew clean bootBuildImage --imageName=${IMAGE_NAME}")
+                sh(script: "docker build -t ${IMAGE_NAME}:latest .")
           }
         }
         stage('Tag'){
