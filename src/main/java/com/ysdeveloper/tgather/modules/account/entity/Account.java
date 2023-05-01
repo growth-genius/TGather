@@ -99,7 +99,7 @@ public class Account extends UpdatedEntity {
 
     @OneToMany( mappedBy = "account", fetch = LAZY )
     private List<TravelGroupMember> travelGroupMemberList = new ArrayList<>();
-    
+
     /** 로그인 후 세팅 */
     public void afterLoginSuccess () {
         this.loginFailCount = 0;
@@ -122,25 +122,6 @@ public class Account extends UpdatedEntity {
         this.nickname = nickname;
     }
 
-    // from
-    public static Account from ( AccountSaveForm accountSaveForm ) {
-        Account account = new Account();
-        account.username = accountSaveForm.getUsername();
-        account.password = accountSaveForm.getPassword();
-        account.email = accountSaveForm.getEmail();
-        account.birth = accountSaveForm.getBirth();
-        account.nickname = accountSaveForm.getNickname();
-        account.profileImage = accountSaveForm.getProfileImage();
-        account.loginType = LoginType.TGAHTER;
-        account.joinedAt = LocalDateTime.now();
-        return account;
-    }
-
-    public void generateAuthCode ( String authCode ) {
-        this.authCode = authCode;
-        this.authCodeModifiedAt = LocalDateTime.now();
-    }
-
     public void login ( PasswordEncoder passwordEncoder, String credential ) {
         if ( !passwordEncoder.matches( credential, this.password ) ) {
             this.loginFailCount++;
@@ -153,4 +134,26 @@ public class Account extends UpdatedEntity {
     public void successAuthUser () {
         this.accountStatus = AccountStatus.NORMAL;
     }
+
+    /**
+     * 입력 데이터로 Account 계정 생성
+     * @param accountSaveForm Account입력 form
+     * @param authCode
+     * @return
+     */
+    public static Account createAccountByFormAndAuthCode ( AccountSaveForm accountSaveForm, String authCode ) {
+        Account account = new Account();
+        account.username = accountSaveForm.getUsername();
+        account.password = accountSaveForm.getPassword();
+        account.email = accountSaveForm.getEmail();
+        account.birth = accountSaveForm.getBirth();
+        account.nickname = accountSaveForm.getNickname();
+        account.profileImage = accountSaveForm.getProfileImage();
+        account.loginType = LoginType.TGAHTER;
+        account.joinedAt = LocalDateTime.now();
+        account.authCode = authCode;
+        account.authCodeModifiedAt = LocalDateTime.now();
+        return account;
+    }
+
 }

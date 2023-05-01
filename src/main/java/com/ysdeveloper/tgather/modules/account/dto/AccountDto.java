@@ -1,7 +1,5 @@
 package com.ysdeveloper.tgather.modules.account.dto;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.ysdeveloper.tgather.infra.security.Jwt;
 import com.ysdeveloper.tgather.modules.account.entity.Account;
 import com.ysdeveloper.tgather.modules.account.enums.AccountRole;
@@ -10,9 +8,10 @@ import com.ysdeveloper.tgather.modules.account.enums.TravelTheme;
 import java.time.LocalDateTime;
 import java.util.Set;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
 @Data
-@JsonInclude( Include.NON_NULL )
+@RequiredArgsConstructor
 public class AccountDto {
 
     /** 로그인 아이디 */
@@ -30,7 +29,6 @@ public class AccountDto {
     /** 가입일자 */
     private LocalDateTime joinedAt;
     /** 권한 */
-
     private Set<AccountRole> roles = Set.of( AccountRole.USER );
     /** 로그인 횟수 */
     private int loginCount;
