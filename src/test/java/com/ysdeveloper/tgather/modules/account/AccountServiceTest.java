@@ -38,8 +38,6 @@ class AccountServiceTest extends AbstractContainerBaseTest {
         accountSaveForm.setNickname( "뿜빰뿜" );
         accountSaveForm.setBirth( 19961126 );
         accountSaveForm.setPassword( "yejiCho" );
-        String email = "choyeji1591@gmail.com";
-        accountSaveForm.setEmail( email );
 
         // when
         AccountDto accountDto = accountService.saveAccount( accountSaveForm );
