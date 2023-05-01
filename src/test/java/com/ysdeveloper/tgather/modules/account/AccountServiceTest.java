@@ -28,21 +28,24 @@ class AccountServiceTest extends AbstractContainerBaseTest {
     @Autowired
     private AccountService accountService;
 
+    private static final String email = "choyeji1591@gmail.com";
+    private static final String nickname = "뿜빰뿜";
+
     @Test
     @Order( 1 )
     @DisplayName( "테스트케이스1 - 계정생성 성공" )
     void testSaveAccount () {
         // given
         AccountSaveForm accountSaveForm = new AccountSaveForm();
-        accountSaveForm.setEmail( "yejiCho" );
-        accountSaveForm.setNickname( "뿜빰뿜" );
+        accountSaveForm.setEmail( email );
+        accountSaveForm.setNickname( nickname );
         accountSaveForm.setBirth( 19961126 );
         accountSaveForm.setPassword( "yejiCho" );
 
         // when
         AccountDto accountDto = accountService.saveAccount( accountSaveForm );
         // then
-        Assertions.assertEquals( "뿜빰뿜", accountDto.getNickname() );
+        Assertions.assertEquals( nickname, accountDto.getNickname() );
     }
 
     @Test
@@ -52,8 +55,7 @@ class AccountServiceTest extends AbstractContainerBaseTest {
 
         // given
         AccountSaveForm accountSaveForm = new AccountSaveForm();
-        accountSaveForm.setEmail( "yejiCho" );
-        accountSaveForm.setNickname( "뿜빰뿜" );
+        accountSaveForm.setNickname( nickname );
         accountSaveForm.setBirth( 19961126 );
         accountSaveForm.setPassword( "yejiCho" );
         String email = "choyeji1591@gmail.com";
@@ -72,15 +74,15 @@ class AccountServiceTest extends AbstractContainerBaseTest {
     void testSuccessSaveAccount () {
         // given
         AccountSaveForm accountSaveForm = new AccountSaveForm();
-        accountSaveForm.setEmail( "yeji" );
-        accountSaveForm.setNickname( "뿜뿜" );
+        String nickname1 = "뿜뿜";
+        accountSaveForm.setNickname( nickname1 );
         accountSaveForm.setBirth( 19961126 );
         accountSaveForm.setPassword( "yeji" );
         accountSaveForm.setEmail( "goe152@naver.com" );
         // when
         AccountDto accountDto = accountService.saveAccount( accountSaveForm );
         // then
-        Assertions.assertEquals( "뿜뿜", accountDto.getNickname() );
+        Assertions.assertEquals( nickname1, accountDto.getNickname() );
     }
 
     @Test
@@ -88,19 +90,21 @@ class AccountServiceTest extends AbstractContainerBaseTest {
     void test_case_1 () {
 
         // given
-        Optional<Account> byEmail = accountRepository.findByEmail( "goe152@naver.com" );
+
+        String goe152 = "goe152@naver.com";
+        Optional<Account> byEmail = accountRepository.findByEmail( goe152 );
 
         assertTrue( byEmail.isPresent() );
 
         AuthCodeForm authCodeForm = new AuthCodeForm();
-        authCodeForm.setEmail( "goe152@naver.com" );
+        authCodeForm.setEmail( goe152 );
         authCodeForm.setAuthCode( byEmail.get().getAuthCode() );
 
         // when
         AccountDto accountDto = accountService.validAuthCode( authCodeForm );
 
         // then
-        Assertions.assertEquals( "뿜뿜", accountDto.getNickname() );
+        Assertions.assertEquals( byEmail.get().getNickname(), accountDto.getNickname() );
 
     }
 
