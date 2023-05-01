@@ -6,11 +6,9 @@ import com.ysdeveloper.tgather.infra.security.Jwt;
 import com.ysdeveloper.tgather.modules.account.entity.Account;
 import com.ysdeveloper.tgather.modules.account.enums.AccountRole;
 import com.ysdeveloper.tgather.modules.account.enums.LoginType;
+import com.ysdeveloper.tgather.modules.account.enums.TravelTheme;
 import java.time.LocalDateTime;
 import java.util.Set;
-
-import com.ysdeveloper.tgather.modules.account.enums.TravelTheme;
-import lombok.Builder;
 import lombok.Data;
 
 @Data
@@ -32,7 +30,7 @@ public class AccountDto {
     /** 가입일자 */
     private LocalDateTime joinedAt;
     /** 권한 */
-    @Builder.Default
+
     private Set<AccountRole> roles = Set.of( AccountRole.USER );
     /** 로그인 횟수 */
     private int loginCount;
