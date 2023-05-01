@@ -31,23 +31,35 @@ public class AccountService {
 
     /**
      * 회원가입
-     * @param accountSaveForm
-     * @return AccountDto
+     * @param accountSaveForm account 저장 폼
+     * @return AccountDto account 생성 결과 Dto
      */
     public AccountDto saveAccount ( AccountSaveForm accountSaveForm ) {
         accountSaveForm.setPassword( passwordEncoder.encode( accountSaveForm.getPassword() ) );
 
         validateAccount( accountSaveForm );
 
-        Account account = Account.from( accountSaveForm );
-        account.generateAuthCode( sendSignUpConfirmEmail( account.getEmail() ) );
+        String authCode = sendSignUpConfirmEmail( accountSaveForm.getEmail() );
+        Account account = Account.createAccountByFormAndAuthCode( accountSaveForm, authCode );
         accountRepository.save( account );
         return AccountDto.from( account );
     }
 
     /**
+     * 이메일 인증코드 전송
+     * @param email 이메일
+     * @return authCode 인증코드
+     */
+    private String sendSignUpConfirmEmail ( String email ) {
+        String authCode = RandomStringUtils.randomAlphanumeric( 12 );
+        EmailMessage emailMessage = EmailMessage.builder().to( email ).subject( "TGather 회원가입 인증 메일" ).message( authCode ).build();
+        emailService.sendEmail( emailMessage );
+        return authCode;
+    }
+
+    /**
      * 입력된 정보 확인
-     * @param accountSaveForm
+     * @param accountSaveForm account 저장 폼
      */
     private void validateAccount ( AccountSaveForm accountSaveForm ) {
 
@@ -62,22 +74,19 @@ public class AccountService {
     }
 
     /**
-     * 이메일 인증코드 전송
-     * @param email
-     * @return authCode
+     * nickName 중복확인
+     * @param nickName 닉네임
+     * @return boolean 닉네임 유효값 확인 결과
      */
-    private String sendSignUpConfirmEmail ( String email ) {
-        String authCode = RandomStringUtils.randomAlphanumeric( 12 );
-        EmailMessage emailMessage = EmailMessage.builder().to( email ).subject( "TGather 회원가입 인증 메일" ).message( authCode ).build();
-        emailService.sendEmail( emailMessage );
-        return authCode;
+    boolean validNickname ( String nickName ) {
+        return accountRepository.findByNickname( nickName ).isPresent();
     }
 
     /**
      * 사용자 로그인
-     * @param email
-     * @param credential
-     * @return AccountDto
+     * @param email 이메일
+     * @param credential 인증
+     * @return AccountDto 계정 Dto
      */
     public AccountDto login ( String email, CredentialInfo credential ) {
         Account account = accountRepository.findByEmailAndLoginType( email, credential.getLoginType() ).orElseThrow(
@@ -89,8 +98,8 @@ public class AccountService {
 
     /**
      * 이메일 인증 확인
-     * @param authCodeForm
-     * @return AccountDto
+     * @param authCodeForm 인증 코드 확인 form
+     * @return AccountDto 인증 확인 AccountDto
      */
     public AccountDto validAuthCode ( AuthCodeForm authCodeForm ) {
         Account account = accountRepository.findByEmailAndLoginType( authCodeForm.getEmail(), LoginType.TGAHTER ).orElseThrow(
@@ -105,8 +114,8 @@ public class AccountService {
 
     /**
      * 토큰 갱신
-     * @param tokenDto
-     * @return TokenDto
+     * @param tokenDto 토큰 갱신 Dto
+     * @return TokenDto 갱신 토큰 결과 Dto
      */
     public TokenDto renewalTokenByRefreshToken ( TokenDto tokenDto ) {
         if ( jwt.validateToken( tokenDto.getRefreshToken() ) ) {
@@ -114,20 +123,9 @@ public class AccountService {
             Account account = accountRepository.findByEmailAndLoginType( claims.getEmail(), LoginType.TGAHTER ).orElseThrow(
                 () -> new NotFoundException( "이메일을 찾을 수 없습니다." ) );
             AccountDto accountDto = AccountDto.createByAccountAndGenerateAccessToken( account, jwt );
-            tokenDto = TokenDto.builder().accessToken( accountDto.getAccessToken() ).refreshToken( accountDto.getRefreshToken() ).build();
-        } else {
-            throw new ExpiredTokenException();
+            return TokenDto.builder().accessToken( accountDto.getAccessToken() ).refreshToken( accountDto.getRefreshToken() ).build();
         }
-        return tokenDto;
-    }
-
-    /**
-     * nickName 중복확인
-     * @param nickName
-     * @return boolean
-     */
-    boolean validNickname ( String nickName ) {
-        return accountRepository.findByNickname( nickName ).isPresent();
+        throw new ExpiredTokenException();
     }
 
 }
