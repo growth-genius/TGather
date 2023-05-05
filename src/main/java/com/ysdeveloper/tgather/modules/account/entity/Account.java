@@ -73,7 +73,7 @@ public class Account extends UpdatedEntity {
     /* 여행 테마 */
     @ElementCollection( fetch = LAZY )
     @Enumerated( EnumType.STRING )
-    @CollectionTable( name = "travel_themes", joinColumns = @JoinColumn( name = "account_id" ) )
+    @CollectionTable( name = "travel_themes_account", joinColumns = @JoinColumn( name = "account_id" ) )
     private Set<TravelTheme> travelThemes;
 
     /** 계정 상태 */
