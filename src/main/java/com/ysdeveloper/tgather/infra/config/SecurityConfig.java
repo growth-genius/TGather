@@ -18,7 +18,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -57,23 +56,20 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain filterChain ( HttpSecurity http ) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.httpBasic().disable()                                              // rest api 이므로 기본설정 사용안함. 기본설정은 비인증시 로그인폼 화면으로 리다이렉트 된다.
             .csrf().disable()                                              // rest api 이므로 csrf 보안이 필요없으므로 disable 처리.
-            .exceptionHandling().accessDeniedHandler( jwtAccessDeniedHandler ).authenticationEntryPoint( unAuthorizedHandler ).and().headers()
-            .frameOptions().sameOrigin().and().sessionManagement().sessionCreationPolicy(
-                SessionCreationPolicy.STATELESS ) // jwt token 으로 인증하므로 세션은 필요없으므로 생성안함.
+            .exceptionHandling().accessDeniedHandler(jwtAccessDeniedHandler).authenticationEntryPoint(unAuthorizedHandler).and().headers().frameOptions()
+            .sameOrigin().and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // jwt token 으로 인증하므로 세션은 필요없으므로 생성안함.
             .and().cors()
             // .configurationSource(request -> new CorsConfiguration(setCorsConfig()).applyPermitDefaultValues())
-            .configurationSource( corsConfigurationSource() ).and().authorizeRequests().requestMatchers( "/*", "/api/sign-in", "/api/account/sign-up",
-                                                                                                         "/api/account/check-email",
-                                                                                                         "/api/account/check-nickname/**",
-                                                                                                         "/api/account/login",
-                                                                                                         "/api/sign/refresh-token/**" ).permitAll()
-            .requestMatchers( HttpMethod.GET, "/api/profile/*" ).permitAll().requestMatchers( "/api/**" ).hasRole( "USER" ).and().addFilterBefore(
-                jwtAuthenticationTokenFilter(), UsernamePasswordAuthenticationFilter.class );
+            .configurationSource(corsConfigurationSource()).and().authorizeHttpRequests()
+            .requestMatchers("/*", "/api/sign-in", "/api/account/sign-up", "/api/account/check-email", "/api/account/check-nickname/**", "/api/account/login",
+                "/api/sign/refresh-token/**").permitAll().requestMatchers(HttpMethod.GET, "/api/profile/*").permitAll().requestMatchers("/api/**")
+            .hasRole("USER").and().addFilterBefore(jwtAuthenticationTokenFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
+
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
@@ -83,9 +79,9 @@ public class SecurityConfig {
     @Bean
     public UserDetailsService userDetailsService() {
         var manager = new InMemoryUserDetailsManager();
-        var user1 = User.withUsername( "admin" ).password( "admin" ).roles( "ADMIN" ).build();
+        var user1 = User.withUsername("admin").password("admin").roles("ADMIN").build();
 
-        manager.createUser( user1 );
+        manager.createUser(user1);
         return manager;
     }
 
@@ -105,11 +101,6 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
-    }
-
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring().requestMatchers("/v2/api-docs", "/swagger-resources/**", "/swagger-ui.html", "/webjars/**", "/swagger/**");
     }
 
 }
