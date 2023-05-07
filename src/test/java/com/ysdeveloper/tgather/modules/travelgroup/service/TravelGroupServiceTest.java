@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.ysdeveloper.tgather.infra.annotation.ServiceTest;
 import com.ysdeveloper.tgather.modules.account.enums.TravelTheme;
-import com.ysdeveloper.tgather.modules.travelgroup.dto.TravelGroupDTO;
+import com.ysdeveloper.tgather.modules.travelgroup.dto.TravelGroupDto;
 import com.ysdeveloper.tgather.modules.travelgroup.entity.TravelGroup;
 import com.ysdeveloper.tgather.modules.travelgroup.form.TravelGroupForm;
 import com.ysdeveloper.tgather.modules.travelgroup.form.TravelSearchForm;
@@ -31,7 +31,7 @@ class TravelGroupServiceTest {
         travelGroupForm.setGroupName( "일본" );
         travelGroupForm.setTravelThemes( Set.of( TravelTheme.FOOD ) );
 
-        TravelGroupDTO result = travelGroupService.createTravelGroup( travelGroupForm );
+        TravelGroupDto result = travelGroupService.createTravelGroup( travelGroupForm );
         TravelGroup travelGroup = travelGroupRepository.findByGroupName( "일본" );
 
         assertEquals( travelGroup.getGroupName(), result.getGroupName() );
@@ -50,7 +50,7 @@ class TravelGroupServiceTest {
         TravelSearchForm travelSearchForm = new TravelSearchForm();
         travelSearchForm.setTravelThemes( Set.of( TravelTheme.FOOD ) );
 
-        List<TravelGroupDTO> result = travelGroupService.findTravelGroupByTheme( travelSearchForm );
+        List<TravelGroupDto> result = travelGroupService.findTravelGroupByTheme( travelSearchForm );
 
         assertEquals( 1, result.size() );
     }

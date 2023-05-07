@@ -6,7 +6,7 @@ import static com.ysdeveloper.tgather.modules.travelgroup.entity.QTravelGroup.tr
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.ysdeveloper.tgather.modules.account.enums.TravelTheme;
 import com.ysdeveloper.tgather.modules.common.Querydsl5Support;
-import com.ysdeveloper.tgather.modules.travelgroup.dto.TravelGroupDTO;
+import com.ysdeveloper.tgather.modules.travelgroup.dto.TravelGroupDto;
 import com.ysdeveloper.tgather.modules.travelgroup.entity.TravelGroup;
 import java.util.List;
 import java.util.Set;
@@ -18,8 +18,8 @@ public class TravelGroupRepositoryImpl extends Querydsl5Support implements Trave
     }
 
     @Override
-    public List<TravelGroupDTO> searchTravelGroupAllByTravelThemes ( Set<TravelTheme> travelThemes ) {
-        return select( constructor( TravelGroupDTO.class, travelGroup ) ).from( travelGroup ).where( containsTravelGroup( travelThemes ) ).fetch();
+    public List<TravelGroupDto> searchTravelGroupAllByTravelThemes ( Set<TravelTheme> travelThemes ) {
+        return select( constructor( TravelGroupDto.class, travelGroup ) ).from( travelGroup ).where( containsTravelGroup( travelThemes ) ).fetch();
     }
 
     BooleanExpression containsTravelGroup ( Set<TravelTheme> themes ) {
