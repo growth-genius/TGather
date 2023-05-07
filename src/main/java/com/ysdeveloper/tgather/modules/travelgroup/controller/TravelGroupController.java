@@ -1,7 +1,7 @@
 package com.ysdeveloper.tgather.modules.travelgroup.controller;
 
 import com.ysdeveloper.tgather.modules.common.annotation.RestBaseAnnotation;
-import com.ysdeveloper.tgather.modules.travelgroup.dto.TravelGroupDTO;
+import com.ysdeveloper.tgather.modules.travelgroup.dto.TravelGroupDto;
 import com.ysdeveloper.tgather.modules.travelgroup.form.TravelGroupForm;
 import com.ysdeveloper.tgather.modules.travelgroup.form.TravelSearchForm;
 import com.ysdeveloper.tgather.modules.travelgroup.service.TravelGroupService;
@@ -22,12 +22,12 @@ public class TravelGroupController {
     private final TravelGroupService travelGroupService;
 
     @PostMapping
-    public ApiUtil.ApiResult<TravelGroupDTO> createTravelGroup ( @RequestBody @Valid TravelGroupForm travelGroupForm ) {
+    public ApiUtil.ApiResult<TravelGroupDto> createTravelGroup ( @RequestBody @Valid TravelGroupForm travelGroupForm ) {
         return ApiUtil.success( travelGroupService.createTravelGroup( travelGroupForm ) );
     }
 
     @GetMapping
-    public ApiUtil.ApiResult<List<TravelGroupDTO>> findTravelGroupByTravelThemes ( @RequestBody TravelSearchForm travelSearchForm ) {
+    public ApiUtil.ApiResult<List<TravelGroupDto>> findTravelGroupByTravelThemes ( @RequestBody TravelSearchForm travelSearchForm ) {
         return ApiUtil.success( travelGroupService.findTravelGroupByTheme( travelSearchForm ) );
     }
 

@@ -12,7 +12,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class TravelGroupDTO {
+public class TravelGroupDto {
 
     private String groupName;
 
@@ -20,12 +20,12 @@ public class TravelGroupDTO {
 
     private int totalMember;
 
-    public TravelGroupDTO ( TravelGroup travelGroup ) {
+    public TravelGroupDto ( TravelGroup travelGroup ) {
         copyProperties( travelGroup, this );
     }
 
-    public static TravelGroupDTO from ( TravelGroup travelGroup ) {
-        TravelGroupDTO travelGroupDTO = new TravelGroupDTO();
+    public static TravelGroupDto from ( TravelGroup travelGroup ) {
+        TravelGroupDto travelGroupDTO = new TravelGroupDto();
         travelGroupDTO.setGroupName( travelGroup.getGroupName() );
         travelGroupDTO.setTravelThemes( travelGroup.getTravelThemes() );
         travelGroupDTO.setTotalMember( travelGroup.getTravelGroupMemberList().size() );
