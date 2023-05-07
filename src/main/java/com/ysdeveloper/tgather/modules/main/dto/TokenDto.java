@@ -1,4 +1,4 @@
-package com.ysdeveloper.tgather.modules.account.dto;
+package com.ysdeveloper.tgather.modules.main.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
