@@ -8,10 +8,8 @@ import com.ysdeveloper.tgather.modules.account.enums.TravelTheme;
 import java.time.LocalDateTime;
 import java.util.Set;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
 
 @Data
-@RequiredArgsConstructor
 public class AccountDto {
 
     /** 로그인 아이디 */
