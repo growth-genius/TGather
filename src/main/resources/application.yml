@@ -24,5 +24,4 @@ jasypt:
     bean: jasyptStringEncryptor
 
 
-server:
-  port: 9999
+
