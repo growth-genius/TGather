@@ -32,79 +32,78 @@ class AccountServiceTest extends AbstractContainerBaseTest {
     private static final String nickname = "뿜빰뿜";
 
     @Test
-    @Order( 1 )
-    @DisplayName( "테스트케이스1 - 계정생성 성공" )
-    void testSaveAccount () {
+    @Order(1)
+    @DisplayName("테스트케이스1 - 계정생성 성공")
+    void testSaveAccount() {
         // given
         AccountSaveForm accountSaveForm = new AccountSaveForm();
-        accountSaveForm.setEmail( email );
-        accountSaveForm.setNickname( nickname );
-        accountSaveForm.setBirth( 19961126 );
-        accountSaveForm.setPassword( "yejiCho" );
+        accountSaveForm.setEmail(email);
+        accountSaveForm.setNickname(nickname);
+        accountSaveForm.setBirth(19961126);
+        accountSaveForm.setPassword("yejiCho");
 
         // when
-        AccountDto accountDto = accountService.saveAccount( accountSaveForm );
+        AccountDto accountDto = accountService.saveAccount(accountSaveForm);
         // then
-        Assertions.assertEquals( nickname, accountDto.getNickname() );
+        Assertions.assertEquals(nickname, accountDto.getNickname());
     }
 
     @Test
-    @Order( 2 )
-    @DisplayName( value = "테스트케이스2 - 중복된 이메일로 계정 생성 시 BadCredentialsException" )
-    void testSaveAccountThenException () {
+    @Order(2)
+    @DisplayName(value = "테스트케이스2 - 중복된 이메일로 계정 생성 시 BadCredentialsException")
+    void testSaveAccountThenException() {
 
         // given
         AccountSaveForm accountSaveForm = new AccountSaveForm();
-        accountSaveForm.setNickname( nickname );
-        accountSaveForm.setBirth( 19961126 );
-        accountSaveForm.setPassword( "yejiCho" );
+        accountSaveForm.setNickname(nickname);
+        accountSaveForm.setBirth(19961126);
+        accountSaveForm.setPassword("yejiCho");
         String email = "choyeji1591@gmail.com";
-        Optional<Account> byEmail = accountRepository.findByEmail( email );
-        assertTrue( byEmail.isPresent() );
-        accountSaveForm.setEmail( email );
+        Optional<Account> byEmail = accountRepository.findByEmail(email);
+        assertTrue(byEmail.isPresent());
+        accountSaveForm.setEmail(email);
 
         // when,then
-        Assertions.assertThrows( BadCredentialsException.class, () -> {
-            accountService.saveAccount( accountSaveForm );
-        } );
+        Assertions.assertThrows(BadCredentialsException.class, () -> {
+            accountService.saveAccount(accountSaveForm);
+        });
     }
 
     @Test
-    @DisplayName( value = "테스트케이스3 - 계정 생성 성공" )
-    void testSuccessSaveAccount () {
+    @DisplayName(value = "테스트케이스3 - 계정 생성 성공")
+    void testSuccessSaveAccount() {
         // given
         AccountSaveForm accountSaveForm = new AccountSaveForm();
         String nickname1 = "뿜뿜";
-        accountSaveForm.setNickname( nickname1 );
-        accountSaveForm.setBirth( 19961126 );
-        accountSaveForm.setPassword( "yeji" );
-        accountSaveForm.setEmail( "goe152@naver.com" );
+        accountSaveForm.setNickname(nickname1);
+        accountSaveForm.setBirth(19961126);
+        accountSaveForm.setPassword("yeji");
+        accountSaveForm.setEmail("goe152@naver.com");
         // when
-        AccountDto accountDto = accountService.saveAccount( accountSaveForm );
+        AccountDto accountDto = accountService.saveAccount(accountSaveForm);
         // then
-        Assertions.assertEquals( nickname1, accountDto.getNickname() );
+        Assertions.assertEquals(nickname1, accountDto.getNickname());
     }
 
     @Test
-    @DisplayName( "테스트케이스4 - 인증코드 확인" )
-    void test_case_1 () {
+    @DisplayName("테스트케이스4 - 인증코드 확인")
+    void test_case_1() {
 
         // given
+        String email = "goe152@naver.com";
+        Optional<Account> optionalAccount = accountRepository.findByEmail(email);
 
-        String goe152 = "goe152@naver.com";
-        Optional<Account> byEmail = accountRepository.findByEmail( goe152 );
-
-        assertTrue( byEmail.isPresent() );
+        assertTrue(optionalAccount.isPresent());
 
         AuthCodeForm authCodeForm = new AuthCodeForm();
-        authCodeForm.setEmail( goe152 );
-        authCodeForm.setAuthCode( byEmail.get().getAuthCode() );
+        authCodeForm.setEmail(email);
+        authCodeForm.setAuthCode(optionalAccount.get().getAuthCode());
 
         // when
-        AccountDto accountDto = accountService.validAuthCode( authCodeForm );
+        AccountDto accountDto = accountService.validAuthCode(authCodeForm);
 
         // then
-        Assertions.assertEquals( byEmail.get().getNickname(), accountDto.getNickname() );
+        Assertions.assertEquals(optionalAccount.get().getUuid(), accountDto.getUuid());
 
     }
 
