@@ -25,34 +25,34 @@ class TravelGroupServiceTest {
     private TravelGroupRepository travelGroupRepository;
 
     @Test
-    @DisplayName( "여행 그룹 생성 확인" )
-    void createTravelGroup () {
+    @DisplayName("여행 그룹 생성 확인")
+    void createTravelGroup() {
         TravelGroupForm travelGroupForm = new TravelGroupForm();
-        travelGroupForm.setGroupName( "일본" );
-        travelGroupForm.setTravelThemes( Set.of( TravelTheme.FOOD ) );
+        travelGroupForm.setGroupName("일본");
+        travelGroupForm.setTravelThemes(Set.of(TravelTheme.FOOD));
 
-        TravelGroupDto result = travelGroupService.createTravelGroup( travelGroupForm );
-        TravelGroup travelGroup = travelGroupRepository.findByGroupName( "일본" );
+        TravelGroupDto result = travelGroupService.createTravelGroup(travelGroupForm);
+        TravelGroup travelGroup = travelGroupRepository.findByGroupName("일본").orElseThrow(() -> new RuntimeException("등록된 여행그룹을 찾을 수 없습니다."));
 
-        assertEquals( travelGroup.getGroupName(), result.getGroupName() );
+        assertEquals(travelGroup.getGroupName(), result.getGroupName());
 
     }
 
     @Test
-    @DisplayName( "여행 테마 조회" )
-    void test_case_1 () {
+    @DisplayName("여행 테마 조회")
+    void test_case_1() {
         TravelGroupForm travelGroupForm = new TravelGroupForm();
-        travelGroupForm.setGroupName( "일본" );
-        travelGroupForm.setTravelThemes( Set.of( TravelTheme.FOOD ) );
+        travelGroupForm.setGroupName("일본");
+        travelGroupForm.setTravelThemes(Set.of(TravelTheme.FOOD));
 
-        travelGroupService.createTravelGroup( travelGroupForm );
+        travelGroupService.createTravelGroup(travelGroupForm);
 
         TravelSearchForm travelSearchForm = new TravelSearchForm();
-        travelSearchForm.setTravelThemes( Set.of( TravelTheme.FOOD ) );
+        travelSearchForm.setTravelThemes(Set.of(TravelTheme.FOOD));
 
-        List<TravelGroupDto> result = travelGroupService.findTravelGroupByTheme( travelSearchForm );
+        List<TravelGroupDto> result = travelGroupService.findTravelGroupByTheme(travelSearchForm);
 
-        assertEquals( 1, result.size() );
+        assertEquals(1, result.size());
     }
 
 
