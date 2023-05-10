@@ -35,16 +35,16 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Entity
 @Getter
-@NoArgsConstructor( access = AccessLevel.PROTECTED )
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Account extends UpdatedEntity {
 
     /* 아이디 */
     @Id
-    @GeneratedValue( strategy = GenerationType.IDENTITY )
-    @Column( name = "account_id" )
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "account_id")
     private Long id;
     /* 고유 식별자 */
-    @Column( unique = true )
+    @Column(unique = true)
     private String uuid;
     /* 사용자 이름 */
     private String username;
@@ -57,10 +57,10 @@ public class Account extends UpdatedEntity {
     /* 로그인 형태 */
     private LoginType loginType;
     /* 권한 */
-    @ElementCollection( fetch = LAZY )
-    @Enumerated( EnumType.STRING )
-    @CollectionTable( name = "account_roles", joinColumns = @JoinColumn( name = "account_id" ) )
-    private Set<AccountRole> roles = Set.of( AccountRole.USER );
+    @ElementCollection(fetch = LAZY)
+    @Enumerated(EnumType.STRING)
+    @CollectionTable(name = "account_roles", joinColumns = @JoinColumn(name = "account_id"))
+    private Set<AccountRole> roles = Set.of(AccountRole.USER);
     /* 나이 */
     private int age;
 
@@ -71,13 +71,13 @@ public class Account extends UpdatedEntity {
     private LocalDateTime authCodeModifiedAt;
 
     /* 여행 테마 */
-    @ElementCollection( fetch = LAZY )
-    @Enumerated( EnumType.STRING )
-    @CollectionTable( name = "travel_themes_account", joinColumns = @JoinColumn( name = "account_id" ) )
+    @ElementCollection(fetch = LAZY)
+    @Enumerated(EnumType.STRING)
+    @CollectionTable(name = "travel_themes_account", joinColumns = @JoinColumn(name = "account_id"))
     private Set<TravelTheme> travelThemes;
 
     /** 계정 상태 */
-    @Enumerated( EnumType.STRING )
+    @Enumerated(EnumType.STRING)
     private AccountStatus accountStatus = AccountStatus.VERIFY_EMAIL;
 
     /** 프로필 이미지 */
@@ -97,51 +97,59 @@ public class Account extends UpdatedEntity {
     /** 마지막 로그인 일자 */
     private LocalDateTime lastLoginAt;
 
-    @OneToMany( mappedBy = "account", fetch = LAZY )
+    @OneToMany(mappedBy = "account", fetch = LAZY)
     private List<TravelGroupMember> travelGroupMemberList = new ArrayList<>();
 
+    // 테스트 용도
+    public static Account createForTest(String email) {
+        Account account = new Account();
+        account.email = email;
+        return account;
+    }
+
     /** 로그인 후 세팅 */
-    public void afterLoginSuccess () {
+    public void afterLoginSuccess() {
         this.loginFailCount = 0;
         this.loginCount++;
         this.lastLoginAt = LocalDateTime.now();
     }
 
     /** 비밀번호 변경 */
-    public void changePassword ( String password ) {
+    public void changePassword(String password) {
         this.password = password;
     }
 
     /** 프로필 사진 변경 */
-    public void changeProfileImage ( String profileImage ) {
+    public void changeProfileImage(String profileImage) {
         this.profileImage = profileImage;
     }
 
     /** 이름 변경 */
-    public void changeNickname ( String nickname ) {
+    public void changeNickname(String nickname) {
         this.nickname = nickname;
     }
 
-    public void login ( PasswordEncoder passwordEncoder, String credential ) {
-        if ( !passwordEncoder.matches( credential, this.password ) ) {
+    public void login(PasswordEncoder passwordEncoder, String credential) {
+        if (!passwordEncoder.matches(credential, this.password)) {
             this.loginFailCount++;
-            throw new BadRequestException( ErrorMessage.NOT_MATCHED_ACCOUNT.getMessage() );
-        } else if ( this.accountStatus != AccountStatus.NORMAL ) {
-            throw new BadRequestException( ErrorMessage.VERIFY_EMAIL.getMessage() );
+            throw new BadRequestException(ErrorMessage.NOT_MATCHED_ACCOUNT.getMessage());
+        } else if (this.accountStatus != AccountStatus.NORMAL) {
+            throw new BadRequestException(ErrorMessage.VERIFY_EMAIL.getMessage());
         }
     }
 
-    public void successAuthUser () {
+    public void successAuthUser() {
         this.accountStatus = AccountStatus.NORMAL;
     }
 
     /**
      * 입력 데이터로 Account 계정 생성
+     *
      * @param accountSaveForm Account입력 form
      * @param authCode
      * @return
      */
-    public static Account createAccountByFormAndAuthCode ( AccountSaveForm accountSaveForm, String authCode ) {
+    public static Account createAccountByFormAndAuthCode(AccountSaveForm accountSaveForm, String authCode) {
         Account account = new Account();
         account.username = accountSaveForm.getUsername();
         account.password = accountSaveForm.getPassword();
