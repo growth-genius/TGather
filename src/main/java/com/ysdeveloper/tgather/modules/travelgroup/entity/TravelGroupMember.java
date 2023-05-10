@@ -37,13 +37,16 @@ public class TravelGroupMember {
     @Enumerated(EnumType.STRING)
     private TravelGroupRole travelGroupRole;
 
+    private boolean approved;
+
     private TravelGroupMember(TravelGroup travelGroup, Account account, TravelGroupRole travelGroupRole) {
         this.travelGroup = travelGroup;
         this.account = account;
         this.travelGroupRole = travelGroupRole;
+        this.approved = TravelGroupRole.LEADER.equals(travelGroupRole) || travelGroup.isOpen();
     }
 
-    private static TravelGroupMember of(TravelGroup travelGroup, Account account, TravelGroupRole travelGroupRole) {
+    static TravelGroupMember of(TravelGroup travelGroup, Account account, TravelGroupRole travelGroupRole) {
         return new TravelGroupMember(travelGroup, account, travelGroupRole);
     }
 
