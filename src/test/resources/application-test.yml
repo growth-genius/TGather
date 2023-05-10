@@ -21,3 +21,9 @@ logging:
           descriptor:
             sql:
               BasicBinder: TRACE
+
+jwt:
+  header: Authorization
+  issuer: tgather
+  secret: VEdhdGhlci1wcm9qZWN0Cg==
+  token-validity-in-seconds: 86400
