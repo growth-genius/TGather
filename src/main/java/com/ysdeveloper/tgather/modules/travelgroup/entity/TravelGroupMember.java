@@ -12,45 +12,48 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class TravelGroupMember {
 
     @Id
-    @GeneratedValue( strategy = GenerationType.IDENTITY )
-    @Column( name = "travel_group_member_id" )
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "travel_group_member_id")
     private Long id;
     /* 여행 그룹 */
-    @ManyToOne( fetch = FetchType.LAZY )
-    @JoinColumn( name = "travel_group_id" )
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "travel_group_id")
     private TravelGroup travelGroup;
     /* 사용자 */
-    @ManyToOne( fetch = FetchType.LAZY )
-    @JoinColumn( name = "account_id" )
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "account_id")
     private Account account;
     /* 여행 그룹 권한 */
-    @Enumerated( EnumType.STRING )
+    @Enumerated(EnumType.STRING)
     private TravelGroupRole travelGroupRole;
 
-    private TravelGroupMember ( TravelGroup travelGroup, Account account, TravelGroupRole travelGroupRole ) {
+    private TravelGroupMember(TravelGroup travelGroup, Account account, TravelGroupRole travelGroupRole) {
         this.travelGroup = travelGroup;
         this.account = account;
         this.travelGroupRole = travelGroupRole;
     }
 
-    private static TravelGroupMember of ( TravelGroup travelGroup, Account account, TravelGroupRole travelGroupRole ) {
-        return new TravelGroupMember( travelGroup, account, travelGroupRole );
+    private static TravelGroupMember of(TravelGroup travelGroup, Account account, TravelGroupRole travelGroupRole) {
+        return new TravelGroupMember(travelGroup, account, travelGroupRole);
     }
 
-    public void addMember () {
-        this.travelGroup.getTravelGroupMemberList().add( this );
+    public void addMember() {
+        this.travelGroup.getTravelGroupMemberList().add(this);
         this.travelGroup.plusParticipant();
     }
 
-    public void removeMember () {
-        this.travelGroup.getTravelGroupMemberList().remove( this );
+    public void removeMember() {
+        this.travelGroup.getTravelGroupMemberList().remove(this);
         this.travelGroup.minusParticipant();
     }
 
