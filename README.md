@@ -2,7 +2,7 @@
 
 ## TGather 서버 구조도
 
-![TGather구조도](https://raw.githubusercontent.com/ys-developer/TGather/yeji/add-readme/readme_image/TGather%EC%84%9C%EB%B2%84%EA%B5%AC%EC%A1%B0%EB%8F%84.png)
+![TGather구조도](https://github.com/ys-developer/TGather/assets/98408267/a0453def-eb47-4bcf-a4ba-d5ef4595c33d)
 
 ## 프로젝트 목표
 
