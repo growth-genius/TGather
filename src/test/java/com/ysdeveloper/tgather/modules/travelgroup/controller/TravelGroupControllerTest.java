@@ -19,29 +19,31 @@ import org.springframework.http.MediaType;
 
 @MockMvcTest
 @SpringBootTest
-@WithMockJwtAuthentication
 class TravelGroupControllerTest extends AbstractContainerMvcTest {
 
     @Test
-    @DisplayName( "여행 그룹 생성 테스트" )
-    void createTravelGroup () throws Exception {
+    @DisplayName("여행 그룹 생성 테스트")
+    @WithMockJwtAuthentication
+    void createTravelGroup() throws Exception {
         // given
         TravelGroupForm travelGroupForm = new TravelGroupForm();
-        travelGroupForm.setGroupName( "국내 먹방 탐방" );
-        travelGroupForm.setTravelThemes( Set.of( TravelTheme.FOOD ) );
-        travelGroupForm.setStartDate( "20230505" );
+        travelGroupForm.setGroupName("국내 먹방 탐방");
+        travelGroupForm.setTravelThemes(Set.of(TravelTheme.FOOD));
+        travelGroupForm.setStartDate("20230505");
 
-        mockMvc.perform( post( "/api/travel-group" ).contentType( MediaType.APPLICATION_JSON )
-                             .content( this.objectMapper.writeValueAsString( travelGroupForm ) ) ).andExpect( status().isOk() );
+        mockMvc.perform(post("/api/travel-group").contentType(MediaType.APPLICATION_JSON).content(this.objectMapper.writeValueAsString(travelGroupForm)))
+            .andExpect(status().isOk());
 
     }
 
     @Test
-    @DisplayName( "여행 테마로 그룹 조회" )
-    void findTravelGroupByTravelThemes () throws Exception {
+    @WithMockJwtAuthentication
+    @DisplayName("여행 테마로 그룹 조회")
+    void findTravelGroupByTravelThemes() throws Exception {
         TravelSearchForm travelSearchForm = new TravelSearchForm();
-        travelSearchForm.setTravelThemes( Set.of( TravelTheme.ACTIVITY ) );
-        mockMvc.perform( get( "/api/travel-group" ).contentType( MediaType.APPLICATION_JSON )
-                             .content( this.objectMapper.writeValueAsString( travelSearchForm ) ) ).andDo( print() ).andExpect( status().isOk() );
+        travelSearchForm.setTravelThemes(Set.of(TravelTheme.ACTIVITY));
+        mockMvc.perform(get("/api/travel-group").contentType(MediaType.APPLICATION_JSON).content(this.objectMapper.writeValueAsString(travelSearchForm)))
+            .andDo(print()).andExpect(status().isOk());
     }
+    
 }
