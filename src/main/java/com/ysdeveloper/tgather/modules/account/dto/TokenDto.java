@@ -1,4 +1,4 @@
-package com.ysdeveloper.tgather.modules.main.dto;
+package com.ysdeveloper.tgather.modules.account.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,7 +15,8 @@ public class TokenDto {
 
     private String refreshToken;
 
-    public TokenDto ( String refreshToken ) {
+    public TokenDto(String refreshToken) {
         this.refreshToken = refreshToken;
     }
+
 }

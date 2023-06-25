@@ -1,18 +1,15 @@
 package com.ysdeveloper.tgather.modules.account;
 
-import com.ysdeveloper.tgather.infra.security.CredentialInfo;
 import com.ysdeveloper.tgather.modules.account.dto.AccountDto;
-import com.ysdeveloper.tgather.modules.account.form.AccountSaveForm;
-import com.ysdeveloper.tgather.modules.account.form.AuthCodeForm;
-import com.ysdeveloper.tgather.modules.account.form.SignInForm;
+import com.ysdeveloper.tgather.modules.account.form.ModifyAccountForm;
 import com.ysdeveloper.tgather.modules.common.annotation.RestBaseAnnotation;
 import com.ysdeveloper.tgather.modules.utils.ApiUtil;
-import jakarta.validation.Valid;
+import com.ysdeveloper.tgather.modules.utils.ApiUtil.ApiResult;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @RestBaseAnnotation
@@ -22,25 +19,39 @@ public class AccountController {
 
     private final AccountService accountService;
 
-    @PostMapping( "/sign-up" )
-    public ApiUtil.ApiResult<AccountDto> addUser ( @RequestBody @Valid AccountSaveForm accountSaveForm ) {
-        return ApiUtil.success( accountService.saveAccount( accountSaveForm ) );
+    /**
+     * 사용자 조회
+     *
+     * @param accountId : 사용자 식별자
+     * @return 사용자 정보
+     */
+    @GetMapping("/{accountId}")
+    public ApiResult<AccountDto> getAccount(@PathVariable String accountId) {
+        return ApiUtil.success(accountService.getAccount(accountId));
     }
 
-    @PostMapping( "/check-email" )
-    public ApiUtil.ApiResult<AccountDto> authCode ( @RequestBody @Valid AuthCodeForm authCodeForm ) {
-        return ApiUtil.success( accountService.validAuthCode( authCodeForm ) );
+
+    /**
+     * 계정 정보 수정
+     *
+     * @param accountId         사용자 식별자
+     * @param modifyAccountForm 수정 입력 폼
+     * @return 사용자 정보
+     */
+    @PatchMapping("/{accountId}")
+    public ApiResult<AccountDto> modifyAccount(@PathVariable String accountId, ModifyAccountForm modifyAccountForm) {
+        return ApiUtil.success(accountService.modifyAccount(accountId, modifyAccountForm));
     }
 
-    @PostMapping( "/login" )
-    public ApiUtil.ApiResult<AccountDto> login ( @RequestBody @Valid SignInForm signInForm ) {
-        return ApiUtil.success( accountService.login( signInForm.getEmail(), new CredentialInfo( signInForm.getPassword() ) ) );
+    /**
+     * 사용자 목록 조회
+     *
+     * @param accountIds 조회할 사용자 아이디 목록
+     * @return List<AccountDto> 조회된 사용자 목록</AccountDto>
+     */
+    @GetMapping
+    public ApiResult<List<? extends AccountDto>> getAccounts(List<String> accountIds) {
+        return ApiUtil.success(accountService.getAccounts(accountIds));
     }
-
-    @GetMapping( "/check-nickname/{nickname}" )
-    public ApiUtil.ApiResult<Boolean> authNickname ( @PathVariable String nickname ) {
-        return ApiUtil.success( accountService.validNickname( nickname ) );
-    }
-
 
 }

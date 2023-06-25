@@ -1,5 +1,7 @@
 package com.ysdeveloper.tgather.modules.account.dto;
 
+import static org.springframework.beans.BeanUtils.copyProperties;
+
 import com.ysdeveloper.tgather.infra.security.Jwt;
 import com.ysdeveloper.tgather.modules.account.entity.Account;
 import com.ysdeveloper.tgather.modules.account.enums.AccountRole;
@@ -7,73 +9,74 @@ import com.ysdeveloper.tgather.modules.account.enums.LoginType;
 import com.ysdeveloper.tgather.modules.account.enums.TravelTheme;
 import java.time.LocalDateTime;
 import java.util.Set;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
-@RequiredArgsConstructor
+/**
+ * Custom Account
+ *
+ * @author joyeji
+ * @since 2023.06.06
+ */
+@Getter
+@Setter
 public class AccountDto {
 
     /** 로그인 아이디 */
-    private Long accountId;
+    protected Long id;
     /** 고유 식별자 */
-    private String uuid;
+    protected String accountId;
     /** 이메일 */
-    private String email;
+    protected String email;
     /** 사용자 이름 */
-    private String userName;
+    protected String userName;
     /* 사용자 별명 */
-    private String nickname;
+    protected String nickname;
     /* 패스워드*/
-    private String password;
+    protected String password;
     /** 가입일자 */
-    private LocalDateTime joinedAt;
+    protected LocalDateTime joinedAt;
     /** 권한 */
-    private Set<AccountRole> roles = Set.of( AccountRole.USER );
+    protected Set<AccountRole> roles = Set.of(AccountRole.USER);
     /** 로그인 횟수 */
-    private int loginCount;
+    protected int loginCount;
     /** 마지막 로그인 일자 */
-    private LocalDateTime lastLoginAt;
+    protected LocalDateTime lastLoginAt;
+    /** 프로필 이미지 */
+    protected String profileImage;
+    /** 로그인 타입 */
+    protected LoginType loginType;
+    /** 접속 토큰 */
+    protected String accessToken;
+    /** 재발급 토큰 */
+    protected String refreshToken;
+    /** fcm 토큰 */
+    protected String fcmToken;
+    /** 나이 */
+    protected int age;
+    /** 생년월 */
+    protected int birth;
+    /** 여행 테마 */
+    protected Set<TravelTheme> travelThemes;
 
-    private String profileImage;
-    private LoginType loginType;
-    private String accessToken;
-    private String refreshToken;
-    /* 나이 */
-    private int age;
-
-    private int birth;
-    private Set<TravelTheme> travelThemes;
-
-    AccountDto ( Account account ) {
-        this.accountId = account.getId();
-        this.uuid = account.getUuid();
-        this.userName = account.getUsername();
-        this.nickname = account.getNickname();
-        this.email = account.getEmail();
-        this.loginType = account.getLoginType();
-        this.roles = account.getRoles();
-        this.age = account.getAge();
-        this.birth = account.getBirth();
-        this.travelThemes = account.getTravelThemes();
-        this.profileImage = account.getProfileImage();
-        this.joinedAt = account.getJoinedAt();
-
+    private AccountDto(Account account) {
+        copyProperties(account, this, "password");
     }
 
-    public static AccountDto from ( Account account ) {
-        return new AccountDto( account );
+    public static AccountDto from(Account account) {
+        return new AccountDto(account);
     }
 
-    public static AccountDto createByAccountAndGenerateAccessToken ( Account account, Jwt jwt ) {
-        AccountDto accountDTO = new AccountDto( account );
-        accountDTO.generateAccessToken( jwt );
+    public static AccountDto createByAccountAndGenerateAccessToken(Account account, Jwt jwt) {
+        AccountDto accountDTO = new AccountDto(account);
+        accountDTO.generateAccessToken(jwt);
         return accountDTO;
     }
 
-    public void generateAccessToken ( Jwt jwt ) {
-        Jwt.Claims claims = Jwt.Claims.of( accountId, email, roles.stream().map( AccountRole::name ).toArray( String[]::new ) );
-        this.accessToken = jwt.createAccessToken( claims );
-        this.refreshToken = jwt.createRefreshToken( claims );
+    public void generateAccessToken(Jwt jwt) {
+        Jwt.Claims claims = Jwt.Claims.of(id, accountId, email, nickname, roles.stream().map(AccountRole::name).toArray(String[]::new));
+        this.accessToken = jwt.createAccessToken(claims);
+        this.refreshToken = jwt.createRefreshToken(claims);
     }
+
 }
