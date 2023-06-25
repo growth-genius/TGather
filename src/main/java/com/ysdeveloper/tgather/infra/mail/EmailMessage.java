@@ -1,16 +1,34 @@
 package com.ysdeveloper.tgather.infra.mail;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class EmailMessage {
+
+    private String accountId;
 
     private String to;
 
-    private String subject;
+    private MailSubject mailSubject;
 
     private String message;
+
+    public String getSubject() {
+        return mailSubject.getSubject();
+    }
+
+    public String getHtmlFileName() {
+        return mailSubject.getHtmlFileName();
+    }
+
+    public EmailType getEmailType() {
+        return mailSubject.getEmailType();
+    }
 
 }

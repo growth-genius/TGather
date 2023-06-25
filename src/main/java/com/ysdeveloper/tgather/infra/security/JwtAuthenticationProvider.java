@@ -1,10 +1,10 @@
 package com.ysdeveloper.tgather.infra.security;
 
-import static com.ysdeveloper.tgather.modules.utils.CommonUtil.authorities;
-
 import com.ysdeveloper.tgather.infra.advice.exceptions.NotFoundException;
 import com.ysdeveloper.tgather.modules.account.AccountService;
 import com.ysdeveloper.tgather.modules.account.dto.AccountDto;
+import com.ysdeveloper.tgather.modules.account.form.SignInForm;
+import com.ysdeveloper.tgather.modules.utils.CommonUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
@@ -22,32 +22,31 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
     private final AccountService accountService;
 
     @Override
-    public Authentication authenticate ( Authentication authentication ) throws AuthenticationException {
+    public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         JwtAuthenticationToken authenticationToken = (JwtAuthenticationToken) authentication;
-        return processUserAuthentication( String.valueOf( authenticationToken.getPrincipal() ), authenticationToken.getCredentials() );
+        return processUserAuthentication(String.valueOf(authenticationToken.getPrincipal()), authenticationToken.getCredentials());
     }
 
-    private Authentication processUserAuthentication ( String principal, CredentialInfo credential ) {
+    private Authentication processUserAuthentication(String principal, CredentialInfo credential) {
         try {
-            final AccountDto finalAccountDto = accountService.login( principal, credential );
-            CredentialInfo credentialInfo = new CredentialInfo( finalAccountDto.getPassword(), finalAccountDto.getLoginType() );
-            JwtAuthenticationToken authenticationToken = new JwtAuthenticationToken( new JwtAuthentication( finalAccountDto.getAccountId(),
-                                                                                                            finalAccountDto.getEmail() ),
-                                                                                     credentialInfo,
-                                                                                     authorities( finalAccountDto.getRoles() ) );
-            authenticationToken.setDetails( finalAccountDto );
+            AccountDto accountDto = accountService.login(new SignInForm(principal, credential.getCredential()));
+            CredentialInfo credentialInfo = new CredentialInfo(accountDto.getPassword(), accountDto.getLoginType());
+            JwtAuthenticationToken authenticationToken = new JwtAuthenticationToken(
+                new JwtAuthentication(accountDto.getId(), accountDto.getAccountId(), accountDto.getEmail(), accountDto.getNickname()), credentialInfo,
+                CommonUtil.authorities(accountDto.getRoles()));
+            authenticationToken.setDetails(accountDto);
             return authenticationToken;
-        } catch ( NotFoundException e ) {
-            throw new UsernameNotFoundException( e.getMessage() );
-        } catch ( IllegalArgumentException e ) {
-            throw new BadCredentialsException( e.getMessage() );
-        } catch ( DataAccessException e ) {
-            throw new AuthenticationServiceException( e.getMessage(), e );
+        } catch (NotFoundException e) {
+            throw new UsernameNotFoundException(e.getMessage());
+        } catch (IllegalArgumentException e) {
+            throw new BadCredentialsException(e.getMessage());
+        } catch (DataAccessException e) {
+            throw new AuthenticationServiceException(e.getMessage(), e);
         }
     }
 
     @Override
-    public boolean supports ( Class<?> authentication ) {
-        return authentication.isAssignableFrom( JwtAuthenticationToken.class );
+    public boolean supports(Class<?> authentication) {
+        return authentication.isAssignableFrom(JwtAuthenticationToken.class);
     }
 }

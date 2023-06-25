@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @Getter
 @Setter
-@ConfigurationProperties( "jwt" )
+@ConfigurationProperties("jwt")
 public class JwtProperties {
 
     private String header;
@@ -16,4 +16,5 @@ public class JwtProperties {
     private String secret;
 
     private String tokenValidityInMilliseconds;
+
 }
