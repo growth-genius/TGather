@@ -1,6 +1,5 @@
 package com.ysdeveloper.tgather.modules.travelgroup.repository;
 
-
 import static com.ysdeveloper.tgather.modules.travelgroup.entity.QTravelGroup.travelGroup;
 import static com.ysdeveloper.tgather.modules.travelgroup.entity.QTravelGroupMember.travelGroupMember;
 
@@ -19,7 +18,6 @@ public class TravelGroupRepositoryImpl extends Querydsl5Support implements Trave
         super(TravelGroup.class);
     }
 
-
     @Override
     public List<TravelGroup> searchTravelGroupAllByTravelThemes(Set<TravelTheme> travelThemes) {
         return selectFrom(travelGroup).where(containsTravelGroup(travelThemes)).fetch();
@@ -27,21 +25,28 @@ public class TravelGroupRepositoryImpl extends Querydsl5Support implements Trave
 
     @Override
     public Optional<TravelGroup> searchByTravelGroupAndLeader(String travelGroupId, String accountId) {
-        return Optional.ofNullable(selectFrom(travelGroup).innerJoin(travelGroupMember).on(travelGroupMember.travelGroup.eq(travelGroup)).fetchJoin()
-            .where(travelGroup.travelGroupId.eq(travelGroupId), travelGroupMember.accountId.eq(accountId),
-                travelGroupMember.travelGroupRole.eq(TravelGroupRole.LEADER)).fetchOne());
+        return Optional.ofNullable(selectFrom(travelGroup).innerJoin(travelGroupMember)
+                .on(travelGroupMember.travelGroup.eq(travelGroup)).fetchJoin()
+                .where(travelGroup.travelGroupId.eq(travelGroupId), travelGroupMember.accountId.eq(accountId),
+                        travelGroupMember.travelGroupRole.eq(TravelGroupRole.LEADER))
+                .fetchOne());
     }
 
     @Override
     public Optional<TravelGroup> searchByTravelGroupNameWithoutOwn(String travelGroupName, String travelGroupId) {
-        return Optional.ofNullable(selectFrom(travelGroup).innerJoin(travelGroup.travelGroupMemberList, travelGroupMember).fetchJoin()
-            .where(travelGroup.groupName.eq(travelGroupName), travelGroup.travelGroupId.ne(travelGroupId)).fetchOne());
+        return Optional.ofNullable(
+                selectFrom(travelGroup).innerJoin(travelGroup.travelGroupMemberList, travelGroupMember).fetchJoin()
+                        .where(travelGroup.groupName.eq(travelGroupName), travelGroup.travelGroupId.ne(travelGroupId))
+                        .fetchOne());
     }
 
     @Override
     public Optional<TravelGroup> searchTravelGroupByIdWithLeader(String travelGroupId) {
-        return Optional.ofNullable(selectFrom(travelGroup).innerJoin(travelGroup.travelGroupMemberList, travelGroupMember).fetchJoin()
-            .where(travelGroup.travelGroupId.eq(travelGroupId), travelGroupMember.travelGroupRole.eq(TravelGroupRole.LEADER)).fetchOne());
+        return Optional.ofNullable(
+                selectFrom(travelGroup).innerJoin(travelGroup.travelGroupMemberList, travelGroupMember).fetchJoin()
+                        .where(travelGroup.travelGroupId.eq(travelGroupId),
+                                travelGroupMember.travelGroupRole.eq(TravelGroupRole.LEADER))
+                        .fetchOne());
     }
 
     BooleanExpression containsTravelGroup(Set<TravelTheme> themes) {
@@ -55,6 +60,5 @@ public class TravelGroupRepositoryImpl extends Querydsl5Support implements Trave
         }
         return contains;
     }
-
 
 }

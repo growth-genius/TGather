@@ -42,7 +42,8 @@ public class TravelGroupService {
         validTravelGroup(travelGroupSaveForm.getGroupName());
         TravelGroup travelGroup = TravelGroup.from(travelGroupSaveForm);
         travelGroupRepository.save(travelGroup);
-        TravelGroupMember travelGroupMember = TravelGroupMember.createTravelGroupLeader(travelGroup, authentication.accountId());
+        TravelGroupMember travelGroupMember = TravelGroupMember.createTravelGroupLeader(travelGroup,
+                authentication.accountId());
         travelGroupMemberRepository.save(travelGroupMember);
         return TravelGroupDto.from(travelGroup);
     }
@@ -76,9 +77,11 @@ public class TravelGroupService {
      * @param authentication        인증정보
      * @return TravelGroupDto travelGroup 수정 결과
      */
-    public TravelGroupDto modifyTravelGroup(String travelGroupId, TravelGroupModifyForm travelGroupModifyForm, JwtAuthentication authentication) {
-        TravelGroup travelGroup = travelGroupRepository.searchByTravelGroupAndLeader(travelGroupId, authentication.accountId())
-            .orElseThrow(() -> new OmittedRequireFieldException("여행그룹명을 찾을 수 없습니다."));
+    public TravelGroupDto modifyTravelGroup(String travelGroupId, TravelGroupModifyForm travelGroupModifyForm,
+            JwtAuthentication authentication) {
+        TravelGroup travelGroup = travelGroupRepository
+                .searchByTravelGroupAndLeader(travelGroupId, authentication.accountId())
+                .orElseThrow(() -> new OmittedRequireFieldException("여행그룹명을 찾을 수 없습니다."));
         validTravelGroupWithoutOwn(travelGroupModifyForm.getGroupName(), travelGroup.getTravelGroupId());
         travelGroup.modifyTravelGroup(travelGroupModifyForm);
         return TravelGroupDto.from(travelGroup);
@@ -104,8 +107,9 @@ public class TravelGroupService {
      * @return boolean 삭제 여부
      */
     public Boolean deleteTravelGroup(String travelGroupId, JwtAuthentication authentication) {
-        TravelGroup travelGroup = travelGroupRepository.searchByTravelGroupAndLeader(travelGroupId, authentication.accountId())
-            .orElseThrow(() -> new OmittedRequireFieldException("여행그룹명을 찾을 수 없습니다."));
+        TravelGroup travelGroup = travelGroupRepository
+                .searchByTravelGroupAndLeader(travelGroupId, authentication.accountId())
+                .orElseThrow(() -> new OmittedRequireFieldException("여행그룹명을 찾을 수 없습니다."));
         travelGroup.deleteTravelGroup();
         return true;
     }

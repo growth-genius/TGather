@@ -39,7 +39,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Getter
 @DynamicUpdate
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@NamedEntityGraph(name = "Account.withRolesAndTravelThemes", attributeNodes = {@NamedAttributeNode("roles"), @NamedAttributeNode("travelThemes")})
+@NamedEntityGraph(name = "Account.withRolesAndTravelThemes", attributeNodes = { @NamedAttributeNode("roles"),
+        @NamedAttributeNode("travelThemes") })
 public class Account extends UpdatedEntity {
 
     /* 아이디 */
@@ -109,7 +110,8 @@ public class Account extends UpdatedEntity {
         this.loginFailCount = 0;
         this.loginCount++;
         this.lastLoginAt = LocalDateTime.now();
-        if (StringUtils.isNotEmpty(fcmToken)) this.changeFcmTokenIfChanged(fcmToken);
+        if (StringUtils.isNotEmpty(fcmToken))
+            this.changeFcmTokenIfChanged(fcmToken);
     }
 
     /**

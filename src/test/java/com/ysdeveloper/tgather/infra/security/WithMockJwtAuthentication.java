@@ -14,5 +14,7 @@ public @interface WithMockJwtAuthentication {
 
     String userName () default "관리자";
 
+    String role () default "ROLE_USER";
+
 
 }

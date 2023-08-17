@@ -46,7 +46,7 @@ public class TravelGroupController {
      */
     @PostMapping
     public ApiResult<TravelGroupDto> createTravelGroup(@RequestBody @Valid TravelGroupSaveForm travelGroupSaveForm,
-        @AuthenticationPrincipal JwtAuthentication authentication) {
+            @AuthenticationPrincipal JwtAuthentication authentication) {
         return success(travelGroupService.createTravelGroup(travelGroupSaveForm, authentication));
     }
 
@@ -58,8 +58,9 @@ public class TravelGroupController {
      * @return TravelGroupDto 여행그룹 수정 결과
      */
     @PatchMapping("/{travelGroupId}")
-    public ApiResult<TravelGroupDto> modifyTravelGroup(@PathVariable String travelGroupId, @RequestBody @Valid TravelGroupModifyForm travelGroupModifyForm,
-        @AuthenticationPrincipal JwtAuthentication authentication) {
+    public ApiResult<TravelGroupDto> modifyTravelGroup(@PathVariable String travelGroupId,
+            @RequestBody @Valid TravelGroupModifyForm travelGroupModifyForm,
+            @AuthenticationPrincipal JwtAuthentication authentication) {
         return success(travelGroupService.modifyTravelGroup(travelGroupId, travelGroupModifyForm, authentication));
     }
 
@@ -82,8 +83,15 @@ public class TravelGroupController {
      * @return Boolean 여행그룹 삭제 결과
      */
     @DeleteMapping("/{travelGroupId}")
-    public ApiResult<Boolean> deleteTravelGroup(@PathVariable String travelGroupId, @AuthenticationPrincipal JwtAuthentication authentication) {
+    public ApiResult<Boolean> deleteTravelGroup(@PathVariable String travelGroupId,
+            @AuthenticationPrincipal JwtAuthentication authentication) {
         return success(travelGroupService.deleteTravelGroup(travelGroupId, authentication));
+    }
+
+    @GetMapping
+    public ApiUtil.ApiResult<List<TravelGroupDto>> findTravelGroupByTravelThemes(
+            @RequestBody TravelSearchForm travelSearchForm) {
+        return ApiUtil.success(travelGroupService.findTravelGroupByTheme(travelSearchForm));
     }
 
 }

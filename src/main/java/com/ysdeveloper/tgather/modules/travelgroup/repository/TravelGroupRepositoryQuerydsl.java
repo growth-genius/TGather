@@ -1,6 +1,5 @@
 package com.ysdeveloper.tgather.modules.travelgroup.repository;
 
-
 import com.ysdeveloper.tgather.modules.account.enums.TravelTheme;
 import com.ysdeveloper.tgather.modules.travelgroup.entity.TravelGroup;
 import java.util.List;

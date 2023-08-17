@@ -32,7 +32,7 @@ public class AccountDto {
     protected String userName;
     /* 사용자 별명 */
     protected String nickname;
-    /* 패스워드*/
+    /* 패스워드 */
     protected String password;
     /** 가입일자 */
     protected LocalDateTime joinedAt;
@@ -74,7 +74,8 @@ public class AccountDto {
     }
 
     public void generateAccessToken(Jwt jwt) {
-        Jwt.Claims claims = Jwt.Claims.of(id, accountId, email, nickname, roles.stream().map(AccountRole::name).toArray(String[]::new));
+        Jwt.Claims claims = Jwt.Claims.of(id, accountId, email, nickname,
+                roles.stream().map(AccountRole::name).toArray(String[]::new));
         this.accessToken = jwt.createAccessToken(claims);
         this.refreshToken = jwt.createRefreshToken(claims);
     }
