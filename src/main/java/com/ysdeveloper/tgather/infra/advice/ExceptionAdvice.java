@@ -4,6 +4,7 @@ import static com.ysdeveloper.tgather.modules.utils.ApiUtil.fail;
 
 import com.ysdeveloper.tgather.infra.advice.exceptions.BadRequestException;
 import com.ysdeveloper.tgather.infra.advice.exceptions.ExpiredTokenException;
+import com.ysdeveloper.tgather.infra.advice.exceptions.OmittedRequireFieldException;
 import com.ysdeveloper.tgather.modules.utils.ApiUtil;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
@@ -20,45 +21,49 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 @RestControllerAdvice
 public class ExceptionAdvice {
 
-    private ResponseEntity<ApiUtil.ApiResult<?>> newResponse ( Throwable throwable, HttpStatus status ) {
-        return newResponse( throwable.getMessage(), status );
+    private ResponseEntity<ApiUtil.ApiResult<?>> newResponse(Throwable throwable, HttpStatus status) {
+        return newResponse(throwable.getMessage(), status);
     }
 
-    private ResponseEntity<ApiUtil.ApiResult<?>> newResponse ( String message, HttpStatus status ) {
+    private ResponseEntity<ApiUtil.ApiResult<?>> newResponse(String message, HttpStatus status) {
         HttpHeaders headers = new HttpHeaders();
-        headers.add( "Content-Type", "application/json" );
-        return new ResponseEntity<>( ApiUtil.fail( message, status ), headers, status );
+        headers.add("Content-Type", "application/json");
+        return new ResponseEntity<>(fail(message, status), headers, status);
     }
 
-    @ExceptionHandler( Exception.class )
-    protected ResponseEntity<ApiUtil.ApiResult<?>> defaultException ( Exception e ) {
-        log.error( "defaultException : {} ", e.getMessage() );
+    @ExceptionHandler(Exception.class)
+    protected ResponseEntity<ApiUtil.ApiResult<?>> defaultException(Exception e) {
+        log.error("defaultException : {} ", e.getMessage());
         e.printStackTrace();
-        return newResponse( e, HttpStatus.UNPROCESSABLE_ENTITY );
+        return newResponse(e, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler( { ExpiredTokenException.class } )
-    protected ResponseEntity<ApiUtil.ApiResult<?>> expiredTokenException ( Exception e ) {
+    @ExceptionHandler({ExpiredTokenException.class})
+    protected ResponseEntity<ApiUtil.ApiResult<?>> expiredTokenException(Exception e) {
         HttpHeaders headers = new HttpHeaders();
-        headers.add( "Content-Type", "application/json" );
-        log.error( "expiredTokenException : {} ", e.getMessage() );
-        return new ResponseEntity<>( fail( e.getMessage(), -401 ), headers, HttpStatus.UNAUTHORIZED );
+        headers.add("Content-Type", "application/json");
+        log.error("expiredTokenException : {} ", e.getMessage());
+        return new ResponseEntity<>(fail(e.getMessage(), -401), headers, HttpStatus.UNAUTHORIZED);
     }
 
-    @ExceptionHandler( { IllegalArgumentException.class, IllegalStateException.class, ConstraintViolationException.class,
-        MethodArgumentNotValidException.class, BadRequestException.class, HttpRequestMethodNotSupportedException.class } )
-    public ResponseEntity<?> handleBadRequestException ( Exception e ) {
-        log.error( "Bad request exception occurred: {}", e.getMessage(), e );
-        if ( e instanceof MethodArgumentNotValidException methodargumentnotvalidexception ) {
-            return newResponse( methodargumentnotvalidexception.getBindingResult().getAllErrors().get( 0 ).getDefaultMessage(),
-                                HttpStatus.BAD_REQUEST );
+    @ExceptionHandler({IllegalArgumentException.class, IllegalStateException.class, ConstraintViolationException.class, MethodArgumentNotValidException.class,
+        BadRequestException.class, HttpRequestMethodNotSupportedException.class})
+    public ResponseEntity<?> handleBadRequestException(Exception e) {
+        log.error("Bad request exception occurred: {}", e.getMessage(), e);
+        if (e instanceof MethodArgumentNotValidException methodargumentnotvalidexception) {
+            return newResponse(methodargumentnotvalidexception.getBindingResult().getAllErrors().get(0).getDefaultMessage(), HttpStatus.BAD_REQUEST);
         }
-        return newResponse( e, HttpStatus.BAD_REQUEST );
+        return newResponse(e, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler( MethodArgumentTypeMismatchException.class )
-    public ResponseEntity<?> handleMethodArgumentTypeMismatchException ( MethodArgumentTypeMismatchException e ) {
-        return newResponse( e, HttpStatus.BAD_REQUEST );
+    @ExceptionHandler(OmittedRequireFieldException.class)
+    public ResponseEntity<?> handleOmittedRequireFieldException(OmittedRequireFieldException omittedRequireFieldException) {
+        return newResponse(omittedRequireFieldException, HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<?> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
+        return newResponse(e, HttpStatus.BAD_REQUEST);
     }
 
 }

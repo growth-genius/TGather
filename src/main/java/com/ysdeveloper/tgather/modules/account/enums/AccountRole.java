@@ -1,5 +1,6 @@
 package com.ysdeveloper.tgather.modules.account.enums;
 
+
 import com.ysdeveloper.tgather.modules.common.EnumMapperType;
 
 public enum AccountRole implements EnumMapperType {
@@ -18,17 +19,17 @@ public enum AccountRole implements EnumMapperType {
     }
 
     @Override
-    public String getCode () {
+    public String getCode() {
         return this.name();
     }
 
     @Override
-    public String getTitle () {
+    public String getTitle() {
         return this.role;
     }
 
     @Override
-    public boolean isDefault () {
+    public boolean isDefault() {
         return this.active;
     }
 }

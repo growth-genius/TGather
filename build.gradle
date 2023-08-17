@@ -64,6 +64,9 @@ dependencies {
     // JWT
     // https://mvnrepository.com/artifact/com.auth0/java-jwt
     implementation group: 'com.auth0', name: 'java-jwt', version: '3.18.2'
+    implementation 'com.google.firebase:firebase-admin:9.1.1'
+    implementation 'commons-validator:commons-validator:1.7'
+    
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'io.projectreactor:reactor-test'
@@ -81,7 +84,6 @@ dependencyManagement {
         mavenBom "org.testcontainers:testcontainers-bom:${testcontainersVersion}"
     }
 }
-
 test {
     finalizedBy jacocoTestReport // report is always generated after tests run
 }

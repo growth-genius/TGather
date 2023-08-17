@@ -36,3 +36,16 @@ app:
       redirect-uri: ${app.api-host}/api/oauth2/callback/google
       profile-api-url: https://www.googleapis.com/oauth2/v1/userinfo
       scope: https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: choyeji1591@gmail.com
+    password: ENC(eHyBgpqKdSCNDaWQjGDECbhg38hs10JgFLEAZytE4Ak=)
+    properties:
+      mail:
+        smtp:
+          starttls:
+            enable: true
+            required: true
+          auth: true
+
