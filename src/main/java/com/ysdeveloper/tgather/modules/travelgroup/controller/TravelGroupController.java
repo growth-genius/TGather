@@ -6,6 +6,7 @@ import com.ysdeveloper.tgather.infra.security.JwtAuthentication;
 import com.ysdeveloper.tgather.modules.account.enums.TravelTheme;
 import com.ysdeveloper.tgather.modules.common.annotation.RestBaseAnnotation;
 import com.ysdeveloper.tgather.modules.travelgroup.dto.TravelGroupDto;
+import com.ysdeveloper.tgather.modules.travelgroup.dto.TravelGroupRegisterInitDto;
 import com.ysdeveloper.tgather.modules.travelgroup.form.TravelGroupModifyForm;
 import com.ysdeveloper.tgather.modules.travelgroup.form.TravelGroupSaveForm;
 import com.ysdeveloper.tgather.modules.travelgroup.service.TravelGroupService;
@@ -31,11 +32,21 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @since 2023.06.04
  */
 @RestBaseAnnotation
-@RequestMapping("/travel-group")
+@RequestMapping("/api/travel-group")
 @RequiredArgsConstructor
 public class TravelGroupController {
 
     private final TravelGroupService travelGroupService;
+
+    /**
+     * 여행 그룹 생성 전 초기 조회
+     *
+     * @return TravelGroupRegisterInitDto
+     */
+    @GetMapping("/register/init")
+    public ApiResult<TravelGroupRegisterInitDto> getRegisterInit() {
+        return success(travelGroupService.findRegisterInitData(), "조회되었습니다.");
+    }
 
     /**
      * 여행 그룹 생성 API
@@ -44,7 +55,7 @@ public class TravelGroupController {
      * @param authentication      계정 인증
      * @return TravelGroupDto 여행그룹 생성 결과
      */
-    @PostMapping
+    @PostMapping("/group")
     public ApiResult<TravelGroupDto> createTravelGroup(@RequestBody @Valid TravelGroupSaveForm travelGroupSaveForm,
         @AuthenticationPrincipal JwtAuthentication authentication) {
         return success(travelGroupService.createTravelGroup(travelGroupSaveForm, authentication));
@@ -75,6 +86,18 @@ public class TravelGroupController {
     }
 
     /**
+     * 단일 여행 그룹 조회 API
+     * 여행그룹의 디테일한 정보를 얻기 위한 목적으로 생성된 API
+     *
+     * @param authentication 계정 인증
+     * @return TravelGroupDto 여행그룹 단일 조회 결과
+     */
+    @GetMapping("/{travelGroupId}")
+    public ApiResult<TravelGroupDto> findTravelGroup(@PathVariable String travelGroupId, @AuthenticationPrincipal JwtAuthentication authentication) {
+        return success(travelGroupService.findTravelGroup(travelGroupId, authentication.accountId()));
+    }
+
+    /**
      * 여행그룹 삭제 API
      *
      * @param travelGroupId  여행그룹 아이디
@@ -85,6 +108,6 @@ public class TravelGroupController {
     public ApiResult<Boolean> deleteTravelGroup(@PathVariable String travelGroupId, @AuthenticationPrincipal JwtAuthentication authentication) {
         return success(travelGroupService.deleteTravelGroup(travelGroupId, authentication));
     }
-    
+
 
 }

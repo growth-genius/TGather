@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  */
 @RestBaseAnnotation
 @RequiredArgsConstructor
-@RequestMapping("/account/auth")
+@RequestMapping("/api/account/auth")
 public class AccountAuthController {
 
     private final AccountService accountService;

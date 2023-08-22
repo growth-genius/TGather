@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * @since 2023.06.07
  */
 @RestBaseAnnotation
-@RequestMapping("/travel-group")
+@RequestMapping("/api/travel-group")
 @RequiredArgsConstructor
 public class TravelGroupMemberController {
 

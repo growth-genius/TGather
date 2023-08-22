@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @RestBaseAnnotation
-@RequestMapping("/travel-group")
+@RequestMapping("/api/travel-group")
 @RequiredArgsConstructor
 public class TravelGroupJoinController {
 
