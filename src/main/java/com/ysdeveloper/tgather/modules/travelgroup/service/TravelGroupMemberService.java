@@ -6,9 +6,11 @@ import com.ysdeveloper.tgather.infra.advice.exceptions.NoMemberException;
 import com.ysdeveloper.tgather.infra.advice.exceptions.OmittedRequireFieldException;
 import com.ysdeveloper.tgather.infra.security.JwtAuthentication;
 import com.ysdeveloper.tgather.modules.account.dto.AccountDto;
+import com.ysdeveloper.tgather.modules.account.entity.Account;
 import com.ysdeveloper.tgather.modules.account.repository.AccountRepository;
 import com.ysdeveloper.tgather.modules.common.annotation.BaseServiceAnnotation;
-import com.ysdeveloper.tgather.modules.fcm.dto.FcmMessageDto;
+import com.ysdeveloper.tgather.modules.mail.EmailMessage;
+import com.ysdeveloper.tgather.modules.mail.service.EmailService;
 import com.ysdeveloper.tgather.modules.travelgroup.dto.FcmContentDto;
 import com.ysdeveloper.tgather.modules.travelgroup.dto.TravelGroupMemberDto;
 import com.ysdeveloper.tgather.modules.travelgroup.entity.TravelGroup;
@@ -31,6 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class TravelGroupMemberService {
 
+    private final EmailService emailService;
     private final TravelGroupRepository travelGroupRepository;
     private final TravelGroupMemberRepository travelGroupMemberRepository;
     private final AccountRepository accountRepository;
@@ -89,7 +92,7 @@ public class TravelGroupMemberService {
     }
 
     /**
-     * FCM 토큰 전송 메소드
+     * 메일 전송 메소드
      *
      * @param travelGroup 여행그룹
      * @param accountDto  계정
@@ -97,13 +100,19 @@ public class TravelGroupMemberService {
      * @throws JsonProcessingException
      */
     private boolean sendFcmMessage(TravelGroup travelGroup, AccountDto accountDto) throws JsonProcessingException {
-        FcmMessageDto fcmMessageDto = new FcmMessageDto();
-        fcmMessageDto.setTitle(travelGroup.getGroupName() + "가입 요청");
-        fcmMessageDto.setToken(accountDto.getFcmToken());
-        String fcmContent = objectMapper.writeValueAsString(FcmContentDto.createFcmContentDto(travelGroup.getTravelGroupId(), travelGroup.getGroupName()));
-        fcmMessageDto.setMessage(fcmContent);
-        // travelGroupKafkaProducer.send(kafkaFcmTopicProperties.getSendSingleFcmTopic(), fcmMessageDto);
         log.info("travelGroup is private : {}", travelGroup.getGroupName());
+        String fcmContent = objectMapper.writeValueAsString(FcmContentDto.createFcmContentDto(travelGroup.getTravelGroupId(), travelGroup.getGroupName()));
+
+        TravelGroupMember travelGroupLeader = travelGroup.getTravelGroupMemberList().stream()
+            .filter(travelGroupMember -> travelGroupMember.getTravelGroupRole() == TravelGroupRole.LEADER).findAny()
+            .orElseThrow(OmittedRequireFieldException::new);
+
+        Account groupLeaderInfo = accountRepository.findByAccountId(travelGroupLeader.getAccountId()).orElseThrow(OmittedRequireFieldException::new);
+
+        EmailMessage emailMessage = EmailMessage.builder().accountId(travelGroupLeader.getAccountId()).to(groupLeaderInfo.getEmail()).message(fcmContent)
+            .build();
+
+        emailService.sendEmail(emailMessage);
         return false;
     }
 
