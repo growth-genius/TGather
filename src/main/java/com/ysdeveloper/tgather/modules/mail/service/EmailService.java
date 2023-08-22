@@ -1,5 +1,6 @@
-package com.ysdeveloper.tgather.infra.mail;
+package com.ysdeveloper.tgather.modules.mail.service;
 
+import com.ysdeveloper.tgather.modules.mail.EmailMessage;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -7,9 +8,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
-
 public interface EmailService {
-
 
     void sendEmail(EmailMessage emailMessage);
 
@@ -17,8 +16,9 @@ public interface EmailService {
         MimeMessage mimeMessage = getJavaMailSender().createMimeMessage();
         MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, false, "UTF-8");
         mimeMessageHelper.setTo(emailMessage.getTo());
-        mimeMessageHelper.setSubject(emailMessage.getSubject());
-        mimeMessageHelper.setText(setContext(emailMessage.getSubject(), emailMessage.getMessage(), emailMessage.getHtmlFileName()), true);
+        mimeMessageHelper.setSubject(emailMessage.getSubject().getMailSubject());
+        mimeMessageHelper.setText(
+            setContext(emailMessage.getSubject().getMailSubject(), emailMessage.getMessage(), emailMessage.getSubject().getHtmlFileName()), true);
         getJavaMailSender().send(mimeMessage);
     }
 

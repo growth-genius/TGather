@@ -5,9 +5,6 @@ import com.ysdeveloper.tgather.infra.advice.exceptions.NoMemberException;
 import com.ysdeveloper.tgather.infra.advice.exceptions.NotFoundException;
 import com.ysdeveloper.tgather.infra.advice.exceptions.OmittedRequireFieldException;
 import com.ysdeveloper.tgather.infra.advice.exceptions.RequiredAuthAccountException;
-import com.ysdeveloper.tgather.infra.mail.EmailMessage;
-import com.ysdeveloper.tgather.infra.mail.EmailService;
-import com.ysdeveloper.tgather.infra.mail.MailSubject;
 import com.ysdeveloper.tgather.infra.security.CredentialInfo;
 import com.ysdeveloper.tgather.infra.security.Jwt;
 import com.ysdeveloper.tgather.infra.security.Jwt.Claims;
@@ -26,6 +23,9 @@ import com.ysdeveloper.tgather.modules.account.form.SignInForm;
 import com.ysdeveloper.tgather.modules.account.repository.AccountRepository;
 import com.ysdeveloper.tgather.modules.account.service.AuthService;
 import com.ysdeveloper.tgather.modules.common.annotation.BaseServiceAnnotation;
+import com.ysdeveloper.tgather.modules.mail.EmailMessage;
+import com.ysdeveloper.tgather.modules.mail.enums.EmailSubject;
+import com.ysdeveloper.tgather.modules.mail.service.EmailService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.validator.routines.EmailValidator;
@@ -69,7 +69,7 @@ public class AccountService {
     private String sendSignUpConfirmEmail(String email, String accountId) {
         String authCode = authService.createAuthCode();
         emailService.sendEmail(
-            EmailMessage.builder().accountId(accountId).to(email).message(authCode).mailSubject(MailSubject.VALID_AUTHENTICATION_ACCOUNT).build());
+            EmailMessage.builder().accountId(accountId).to(email).message(authCode).mailSubject(EmailSubject.VALID_AUTHENTICATION_ACCOUNT).build());
         return authCode;
     }
 

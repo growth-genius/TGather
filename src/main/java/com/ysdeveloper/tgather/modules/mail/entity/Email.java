@@ -1,8 +1,7 @@
 package com.ysdeveloper.tgather.modules.mail.entity;
 
-import com.ysdeveloper.tgather.infra.mail.EmailMessage;
-import com.ysdeveloper.tgather.infra.mail.EmailType;
 import com.ysdeveloper.tgather.modules.common.UpdatedEntity;
+import com.ysdeveloper.tgather.modules.mail.EmailMessage;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
