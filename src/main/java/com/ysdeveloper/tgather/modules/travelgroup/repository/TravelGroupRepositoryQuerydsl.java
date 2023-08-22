@@ -2,6 +2,7 @@ package com.ysdeveloper.tgather.modules.travelgroup.repository;
 
 import com.ysdeveloper.tgather.modules.account.enums.TravelTheme;
 import com.ysdeveloper.tgather.modules.travelgroup.entity.TravelGroup;
+import com.ysdeveloper.tgather.modules.travelgroup.vo.TravelGroupSearchVo;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -41,5 +42,7 @@ public interface TravelGroupRepositoryQuerydsl {
      * @return Optional<TravelGroup> 여행그룹
      */
     Optional<TravelGroup> searchTravelGroupByIdWithLeader(String travelGroupId);
+
+    List<TravelGroupSearchVo> searchTravelGroupAllByMe(String accountId);
 
 }

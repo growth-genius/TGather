@@ -1,13 +1,12 @@
 package com.ysdeveloper.tgather.modules.travelgroup.repository;
 
 import static com.ysdeveloper.tgather.modules.travelgroup.entity.QTravelGroup.travelGroup;
-import static com.ysdeveloper.tgather.modules.travelgroup.entity.QTravelGroupMember.travelGroupMember;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.ysdeveloper.tgather.infra.common.Querydsl5Support;
 import com.ysdeveloper.tgather.modules.account.enums.TravelTheme;
 import com.ysdeveloper.tgather.modules.travelgroup.entity.TravelGroup;
-import com.ysdeveloper.tgather.modules.travelgroup.entity.TravelGroupRole;
+import com.ysdeveloper.tgather.modules.travelgroup.vo.TravelGroupSearchVo;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -23,35 +22,10 @@ public class TravelGroupRepositoryImpl extends Querydsl5Support implements Trave
         return selectFrom(travelGroup).where(containsTravelGroup(travelThemes)).fetch();
     }
 
-    @Override
-    public Optional<TravelGroup> searchByTravelGroupAndLeader(String travelGroupId, String accountId) {
-        return Optional.ofNullable(selectFrom(travelGroup).innerJoin(travelGroupMember)
-                .on(travelGroupMember.travelGroup.eq(travelGroup)).fetchJoin()
-                .where(travelGroup.travelGroupId.eq(travelGroupId), travelGroupMember.accountId.eq(accountId),
-                        travelGroupMember.travelGroupRole.eq(TravelGroupRole.LEADER))
-                .fetchOne());
-    }
-
-    @Override
-    public Optional<TravelGroup> searchByTravelGroupNameWithoutOwn(String travelGroupName, String travelGroupId) {
-        return Optional.ofNullable(
-                selectFrom(travelGroup).innerJoin(travelGroup.travelGroupMemberList, travelGroupMember).fetchJoin()
-                        .where(travelGroup.groupName.eq(travelGroupName), travelGroup.travelGroupId.ne(travelGroupId))
-                        .fetchOne());
-    }
-
-    @Override
-    public Optional<TravelGroup> searchTravelGroupByIdWithLeader(String travelGroupId) {
-        return Optional.ofNullable(
-                selectFrom(travelGroup).innerJoin(travelGroup.travelGroupMemberList, travelGroupMember).fetchJoin()
-                        .where(travelGroup.travelGroupId.eq(travelGroupId),
-                                travelGroupMember.travelGroupRole.eq(TravelGroupRole.LEADER))
-                        .fetchOne());
-    }
-
-    BooleanExpression containsTravelGroup(Set<TravelTheme> themes) {
+    private BooleanExpression containsTravelGroup(Set<TravelTheme> travelThemes) {
         BooleanExpression contains = null;
-        for (TravelTheme theme : themes) {
+        if (travelThemes == null) return null;
+        for (TravelTheme theme : travelThemes) {
             if (contains == null) {
                 contains = travelGroup.travelThemes.contains(theme).and(travelGroup.deleteTravelGroup.isFalse());
             } else {
@@ -61,4 +35,23 @@ public class TravelGroupRepositoryImpl extends Querydsl5Support implements Trave
         return contains;
     }
 
+    @Override
+    public Optional<TravelGroup> searchByTravelGroupAndLeader(String travelGroupId, String accountId) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<TravelGroup> searchByTravelGroupNameWithoutOwn(String travelGroupName, String travelGroupId) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<TravelGroup> searchTravelGroupByIdWithLeader(String travelGroupId) {
+        return Optional.empty();
+    }
+
+    @Override
+    public List<TravelGroupSearchVo> searchTravelGroupAllByMe(String accountId) {
+        return null;
+    }
 }

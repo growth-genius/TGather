@@ -3,18 +3,28 @@ package com.ysdeveloper.tgather.modules.travelgroup.service;
 import com.ysdeveloper.tgather.infra.advice.exceptions.OmittedRequireFieldException;
 import com.ysdeveloper.tgather.infra.security.JwtAuthentication;
 import com.ysdeveloper.tgather.modules.account.enums.TravelTheme;
+import com.ysdeveloper.tgather.modules.common.EnumMapperValue;
 import com.ysdeveloper.tgather.modules.common.annotation.BaseServiceAnnotation;
 import com.ysdeveloper.tgather.modules.travelgroup.dto.TravelGroupDto;
+import com.ysdeveloper.tgather.modules.travelgroup.dto.TravelGroupInitDto;
+import com.ysdeveloper.tgather.modules.travelgroup.dto.TravelGroupRegisterInitDto;
+import com.ysdeveloper.tgather.modules.travelgroup.dto.TravelGroupWithPageable;
 import com.ysdeveloper.tgather.modules.travelgroup.entity.TravelGroup;
 import com.ysdeveloper.tgather.modules.travelgroup.entity.TravelGroupMember;
+import com.ysdeveloper.tgather.modules.travelgroup.enums.SearchTravelTheme;
 import com.ysdeveloper.tgather.modules.travelgroup.form.TravelGroupModifyForm;
 import com.ysdeveloper.tgather.modules.travelgroup.form.TravelGroupSaveForm;
 import com.ysdeveloper.tgather.modules.travelgroup.repository.TravelGroupMemberRepository;
 import com.ysdeveloper.tgather.modules.travelgroup.repository.TravelGroupRepository;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 여행그룹 CRUD 서비스
@@ -42,8 +52,7 @@ public class TravelGroupService {
         validTravelGroup(travelGroupSaveForm.getGroupName());
         TravelGroup travelGroup = TravelGroup.from(travelGroupSaveForm);
         travelGroupRepository.save(travelGroup);
-        TravelGroupMember travelGroupMember = TravelGroupMember.createTravelGroupLeader(travelGroup,
-                authentication.accountId());
+        TravelGroupMember travelGroupMember = TravelGroupMember.createTravelGroupLeader(travelGroup, authentication.accountId());
         travelGroupMemberRepository.save(travelGroupMember);
         return TravelGroupDto.from(travelGroup);
     }
@@ -77,11 +86,9 @@ public class TravelGroupService {
      * @param authentication        인증정보
      * @return TravelGroupDto travelGroup 수정 결과
      */
-    public TravelGroupDto modifyTravelGroup(String travelGroupId, TravelGroupModifyForm travelGroupModifyForm,
-            JwtAuthentication authentication) {
-        TravelGroup travelGroup = travelGroupRepository
-                .searchByTravelGroupAndLeader(travelGroupId, authentication.accountId())
-                .orElseThrow(() -> new OmittedRequireFieldException("여행그룹명을 찾을 수 없습니다."));
+    public TravelGroupDto modifyTravelGroup(String travelGroupId, TravelGroupModifyForm travelGroupModifyForm, JwtAuthentication authentication) {
+        TravelGroup travelGroup = travelGroupRepository.searchByTravelGroupAndLeader(travelGroupId, authentication.accountId())
+            .orElseThrow(() -> new OmittedRequireFieldException("여행그룹명을 찾을 수 없습니다."));
         validTravelGroupWithoutOwn(travelGroupModifyForm.getGroupName(), travelGroup.getTravelGroupId());
         travelGroup.modifyTravelGroup(travelGroupModifyForm);
         return TravelGroupDto.from(travelGroup);
@@ -107,10 +114,57 @@ public class TravelGroupService {
      * @return boolean 삭제 여부
      */
     public Boolean deleteTravelGroup(String travelGroupId, JwtAuthentication authentication) {
-        TravelGroup travelGroup = travelGroupRepository
-                .searchByTravelGroupAndLeader(travelGroupId, authentication.accountId())
-                .orElseThrow(() -> new OmittedRequireFieldException("여행그룹명을 찾을 수 없습니다."));
+        TravelGroup travelGroup = travelGroupRepository.searchByTravelGroupAndLeader(travelGroupId, authentication.accountId())
+            .orElseThrow(() -> new OmittedRequireFieldException("여행그룹명을 찾을 수 없습니다."));
         travelGroup.deleteTravelGroup();
         return true;
     }
+
+    /**
+     * 여행목록 전체 조회
+     *
+     * @param pageable 페이지
+     * @return 여행그룹 전체 결과값
+     */
+    @Transactional(readOnly = true)
+    public TravelGroupWithPageable findAllTravelGroupsWithPageable(Pageable pageable) {
+        Page<TravelGroup> travelGroupList = travelGroupRepository.findAll(pageable);
+        List<TravelGroupDto> travelGroupDtoList = travelGroupList.stream().map(TravelGroupDto::from).toList();
+        return TravelGroupWithPageable.of(travelGroupDtoList, pageable.getPageNumber(), pageable.getPageSize(), travelGroupList.getTotalElements(),
+            travelGroupList.getTotalPages(), travelGroupList.isLast());
+    }
+
+    /**
+     * 여행그룹 Dashboard 초기 데이터
+     *
+     * @return TravelGroupInitDto 여행그룹 초기 데이터
+     */
+    public TravelGroupInitDto findInitData() {
+        return TravelGroupInitDto.builder().travelThemes(Arrays.stream(SearchTravelTheme.values()).map(EnumMapperValue::new).toList()).build();
+    }
+
+    public TravelGroupRegisterInitDto findRegisterInitData() {
+        return TravelGroupRegisterInitDto.builder().travelThemes(Arrays.stream(TravelTheme.values()).map(EnumMapperValue::new).toList()).build();
+    }
+
+    /**
+     * 여행그룹 단건 조회
+     *
+     * @param travelGroupId 여행그룹 고유값
+     * @param accountId     계정 고유값
+     * @return
+     */
+    @Transactional(readOnly = true)
+    public TravelGroupDto findTravelGroup(String travelGroupId, String accountId) {
+        if (accountId.isEmpty()) {
+            throw new OmittedRequireFieldException("회원가입시 이용가능한 서비스 입니다.");
+        }
+
+        Optional<TravelGroup> optionalTravelGroup = travelGroupRepository.findByTravelGroupId(travelGroupId);
+        if (optionalTravelGroup.isEmpty()) {
+            throw new OmittedRequireFieldException("여행그룹명을 찾을 수 없습니다.");
+        }
+        return TravelGroupDto.fromLeader(optionalTravelGroup.get());
+    }
+    
 }
