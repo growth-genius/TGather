@@ -2,6 +2,7 @@ package com.ysdeveloper.tgather.modules.mail.entity;
 
 import com.ysdeveloper.tgather.modules.common.UpdatedEntity;
 import com.ysdeveloper.tgather.modules.mail.EmailMessage;
+import com.ysdeveloper.tgather.modules.mail.enums.EmailType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -34,7 +35,7 @@ public class Email extends UpdatedEntity {
         Email email = new Email();
         email.accountId = emailMessage.getAccountId();
         email.emailAddress = emailMessage.getTo();
-        email.emailType = emailMessage.getEmailType();
+        email.emailType = emailMessage.getMailSubject().getEmailType();
         email.content = emailMessage.getMessage();
         return email;
     }

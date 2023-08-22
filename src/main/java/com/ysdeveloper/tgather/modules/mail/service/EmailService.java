@@ -16,9 +16,9 @@ public interface EmailService {
         MimeMessage mimeMessage = getJavaMailSender().createMimeMessage();
         MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, false, "UTF-8");
         mimeMessageHelper.setTo(emailMessage.getTo());
-        mimeMessageHelper.setSubject(emailMessage.getSubject().getMailSubject());
+        mimeMessageHelper.setSubject(emailMessage.getMailSubject().getMailSubject());
         mimeMessageHelper.setText(
-            setContext(emailMessage.getSubject().getMailSubject(), emailMessage.getMessage(), emailMessage.getSubject().getHtmlFileName()), true);
+            setContext(emailMessage.getMailSubject().getMailSubject(), emailMessage.getMessage(), emailMessage.getMailSubject().getHtmlFileName()), true);
         getJavaMailSender().send(mimeMessage);
     }
 
