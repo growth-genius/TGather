@@ -1,5 +1,7 @@
 package com.ysdeveloper.tgather.modules.travelgroup.entity;
 
+import static com.ysdeveloper.tgather.modules.travelgroup.entity.TravelGroup.ParticipantCount.MAX_PARTICIPANT_COUNT;
+
 import com.ysdeveloper.tgather.modules.account.enums.TravelTheme;
 import com.ysdeveloper.tgather.modules.common.UpdatedEntity;
 import com.ysdeveloper.tgather.modules.travelgroup.form.TravelGroupModifyForm;
@@ -15,6 +17,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.NamedAttributeNode;
 import jakarta.persistence.NamedEntityGraph;
 import jakarta.persistence.OneToMany;
@@ -29,7 +32,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
-@NamedEntityGraph(name = "TravelGroup.withTravelThemes", attributeNodes = { @NamedAttributeNode("travelThemes") })
+@NamedEntityGraph(name = "TravelGroup.withTravelThemes", attributeNodes = {@NamedAttributeNode("travelThemes")})
 public class TravelGroup extends UpdatedEntity {
 
     @Id
@@ -43,11 +46,18 @@ public class TravelGroup extends UpdatedEntity {
     @Column(unique = true)
     private String groupName;
 
-    /* 여행 테마 (복수 선택 가능 ) */
+    /* 여행 테마 (복수 선택 가능 )*/
     @ElementCollection(fetch = FetchType.LAZY)
     @Enumerated(EnumType.STRING)
     @CollectionTable(name = "travel_themes", joinColumns = @JoinColumn(name = "travel_group_id"))
     private Set<TravelTheme> travelThemes;
+
+    /** 여행그룹 설명 */
+    private String description;
+
+    /** 여행그룹 이미지 */
+    @Lob
+    private String imageUrl;
 
     /** 만남 참여자 수 */
     private long participantCount = 1;
@@ -57,6 +67,12 @@ public class TravelGroup extends UpdatedEntity {
 
     /** 참여자 수 제한 **/
     private long limitParticipantCount;
+
+    /** 나이 제한 시작 */
+    private int limitAgeRangeStart;
+
+    /** 나이 제한 종료 */
+    private int limitAgeRangeEnd;
 
     /** 여행 시작일 */
     private String startDate;
@@ -75,11 +91,14 @@ public class TravelGroup extends UpdatedEntity {
         this.travelGroupId = UUID.randomUUID().toString();
         this.groupName = travelGroupSaveForm.getGroupName();
         this.travelThemes = travelGroupSaveForm.getTravelThemes();
+        this.description = travelGroupSaveForm.getDescription();
+        this.imageUrl = travelGroupSaveForm.getImageUrl();
         this.startDate = travelGroupSaveForm.getStartDate();
         this.open = travelGroupSaveForm.isOpen();
-        this.limitParticipantCount = travelGroupSaveForm.isLimitedParticipant()
-                ? travelGroupSaveForm.getLimitParticipantCount()
-                : ParticipantCount.MAX_PARTICIPANT_COUNT.getCount();
+        this.limitAgeRangeStart = travelGroupSaveForm.isLimitedAge() ? travelGroupSaveForm.getLimitAgeRangeStart() : 0;
+        this.limitAgeRangeEnd = travelGroupSaveForm.isLimitedAge() ? travelGroupSaveForm.getLimitAgeRangeEnd() : 0;
+        this.limitParticipantCount =
+            travelGroupSaveForm.isLimitedParticipant() ? travelGroupSaveForm.getLimitParticipantCount() : MAX_PARTICIPANT_COUNT.getCount();
     }
 
     public static TravelGroup from(TravelGroupSaveForm travelGroupSaveForm) {
@@ -106,9 +125,12 @@ public class TravelGroup extends UpdatedEntity {
         this.travelThemes = travelGroupModifyForm.getTravelThemes();
         this.startDate = travelGroupModifyForm.getStartDate();
         this.open = travelGroupModifyForm.isOpen();
-        this.limitParticipantCount = travelGroupModifyForm.isLimitedParticipant()
-                ? travelGroupModifyForm.getLimitParticipantCount()
-                : ParticipantCount.MAX_PARTICIPANT_COUNT.getCount();
+        this.description = travelGroupModifyForm.getDescription();
+        this.imageUrl = travelGroupModifyForm.getImageUrl();
+        this.limitAgeRangeStart = travelGroupModifyForm.isLimitedAge() ? travelGroupModifyForm.getLimitAgeRangeStart() : 0;
+        this.limitAgeRangeEnd = travelGroupModifyForm.isLimitedAge() ? travelGroupModifyForm.getLimitAgeRangeEnd() : 0;
+        this.limitParticipantCount =
+            travelGroupModifyForm.isLimitedParticipant() ? travelGroupModifyForm.getLimitParticipantCount() : MAX_PARTICIPANT_COUNT.getCount();
     }
 
     public void deleteTravelGroup() {
